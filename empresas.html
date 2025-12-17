@@ -1,0 +1,4024 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>FinControl | empresas</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+
+/* ===== VARIÁVEIS ===== */
+:root{
+  --bg:#020617;
+  --bg-card:#0f172a;
+  --bg-sidebar:#020617;
+  --primary:#22d3ee;
+  --secondary:#6366f1;
+  --text:#e5e7eb;
+  --muted:#94a3b8;
+  --danger:#ef4444;
+  --success:#22c55e;
+  --warning:#f59e0b;
+  --shadow:0 25px 60px rgba(0,0,0,.85);
+}
+
+body{
+  background:radial-gradient(circle at top,#020617,#000);
+  color:var(--text);
+  display:flex;
+  height:100vh;
+  min-height:100svh;
+  overflow:hidden;
+  transition:.3s;
+}
+
+/* ===== LIGHT MODE ===== */
+body.light{
+  --bg:#f1f5f9;
+  --bg-card:#ffffff;
+  --bg-sidebar:#ffffff;
+  --text:#020617;
+  --muted:#475569;
+  background:#f1f5f9;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar{
+  width:260px;
+  background:var(--bg-sidebar);
+  padding:30px 20px;
+  box-shadow:var(--shadow);
+  overflow:auto;
+}
+
+.logo{
+  font-size:24px;
+  font-weight:800;
+  color:var(--primary);
+}
+.sub{
+  font-size:12px;
+  color:var(--muted);
+  margin:6px 0 18px;
+}
+
+.menu a{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px;
+  border-radius:14px;
+  text-decoration:none;
+  color:var(--text);
+  margin-bottom:10px;
+  transition:.3s;
+  font-weight:600;
+  user-select:none;
+  cursor:pointer;
+}
+
+.menu a:hover{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:#020617;
+  transform:translateX(6px);
+  box-shadow:0 15px 40px rgba(34,211,238,.8);
+}
+.menu a.hidden{display:none !important;}
+
+/* ===== MENU ACTIVE (página atual) ===== */
+.menu a.active{
+  background: linear-gradient(135deg, rgba(34,211,238,.16), rgba(99,102,241,.16));
+  border:1px solid rgba(34,211,238,.28);
+  box-shadow: 0 14px 40px rgba(34,211,238,.22);
+}
+
+/* ===== MOBILE SIDEBAR ===== */
+.sidebar-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  opacity:0;
+  pointer-events:none;
+  transition:.25s;
+  z-index:40;
+}
+body.sidebar-open .sidebar-overlay{
+  opacity:1;
+  pointer-events:auto;
+}
+.menu-btn{
+  display:none;
+  align-items:center;
+  justify-content:center;
+  width:46px;
+  height:46px;
+  border-radius:14px;
+}
+
+@media (max-width: 900px){
+  /* sidebar vira gaveta */
+  .sidebar{
+    position:fixed;
+    left:0; top:0; bottom:0;
+    width:min(86vw, 320px);
+    transform:translateX(-110%);
+    transition:transform .25s ease;
+    z-index:50;
+  }
+  body.sidebar-open .sidebar{ transform:translateX(0); }
+
+  .main{ padding:16px; }
+  .topbar{ flex-wrap:wrap; align-items:flex-start; }
+  .topbar h1{ font-size:22px; }
+  .menu-btn{ display:inline-flex; }
+
+  .top-right{
+    width:100%;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+}
+
+/* ===== TABELAS (scroll horizontal no celular) ===== */
+.table-scroll{
+  width:100%;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+.table-scroll table{min-width:720px;}
+@media (max-width: 600px){
+  .table-scroll table{min-width:640px;}
+}
+
+/* ===== MAIN ===== */
+.main{
+  flex:1;
+  padding:30px;
+  overflow-y:auto;
+}
+
+/* ===== TOPBAR ===== */
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:18px;
+  gap:18px;
+}
+
+.topbar h1{
+  font-size:30px;
+  font-weight:800;
+}
+
+.top-right{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+/* THEME */
+.theme-toggle{
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  background:var(--bg-card);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  box-shadow:0 0 25px rgba(34,211,238,.7);
+  transition:.3s;
+}
+.theme-toggle:hover{transform:scale(1.15)}
+
+.user{
+  text-align:right;
+  min-width:200px;
+}
+.user strong{
+  color:var(--primary);
+  font-size:14px;
+  font-weight:700;
+}
+.user span{
+  font-size:12px;
+  color:var(--muted);
+  display:block;
+}
+
+/* ===== CARDS ===== */
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:18px;
+  margin-bottom:18px;
+}
+
+.card{
+  background:var(--bg-card);
+  padding:22px;
+  border-radius:22px;
+  box-shadow:var(--shadow);
+  transition:.35s;
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+}
+.card:hover{
+  transform:translateY(-8px) scale(1.02);
+  box-shadow:0 35px 80px rgba(34,211,238,.5);
+}
+.card h3{
+  font-size:13px;
+  color:var(--muted);
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.card p{
+  font-size:28px;
+  font-weight:800;
+  margin-top:10px;
+}
+.card small{
+  display:block;
+  margin-top:8px;
+  color:var(--muted);
+  font-size:12px;
+}
+
+/* ===== SEÇÕES ===== */
+.section{display:none;}
+.section.active{display:block;}
+
+/* ===== BOX ===== */
+.box{
+  background:var(--bg-card);
+  padding:28px;
+  border-radius:24px;
+  box-shadow:var(--shadow);
+  margin-bottom:18px;
+}
+
+.box h2{
+  margin-bottom:12px;
+  font-weight:800;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+}
+
+/* ===== FILTER BAR ===== */
+.filters{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:14px 0 18px;
+}
+.filters .field{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.filters label{
+  font-size:12px;
+  color:var(--muted);
+  font-weight:700;
+}
+.filters input,
+.filters select{
+  background: rgba(2,6,23,0.9);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  color: var(--text);
+  padding: 11px 12px;
+  font-size: 14px;
+  min-width:180px;
+  transition: all 0.25s ease;
+}
+.filters input:focus,
+.filters select:focus{
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(34,211,238,0.25);
+}
+.filters button{
+  padding: 11px 14px;
+  border: none;
+  border-radius: 14px;
+  background: var(--primary);
+  color:#020617;
+  font-weight:800;
+  cursor:pointer;
+  transition:.25s;
+  align-self:flex-end;
+}
+.filters button:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 20px 45px rgba(34,211,238,0.5);
+}
+.filters .secondary{
+  background: rgba(99,102,241,0.15);
+  color: var(--text);
+  border: 1px solid rgba(99,102,241,0.45);
+}
+.filters .secondary:hover{
+  box-shadow: 0 20px 45px rgba(99,102,241,0.35);
+}
+
+/* ===== TABLE ===== */
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+th,td{
+  padding:12px 10px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  font-size:13px;
+  vertical-align:top;
+}
+th{
+  text-align:left;
+  color:var(--muted);
+  font-weight:800;
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+tbody tr{
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+tbody tr:hover{
+  background: rgba(34,211,238,0.05);
+  transform: scale(1.01);
+}
+
+/* ===== BADGES ===== */
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:800;
+  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.04);
+}
+.badge.success{border-color:rgba(34,197,94,0.45); background:rgba(34,197,94,0.12); color:#bbf7d0;}
+.badge.danger{border-color:rgba(239,68,68,0.5); background:rgba(239,68,68,0.12); color:#fecaca;}
+.badge.warning{border-color:rgba(245,158,11,0.5); background:rgba(245,158,11,0.12); color:#fde68a;}
+.badge.muted{border-color:rgba(148,163,184,0.35); background:rgba(148,163,184,0.10); color:var(--muted);}
+
+/* ===== BUTTONS ===== */
+.btn{
+  padding:10px 12px;
+  border:none;
+  border-radius:14px;
+  font-weight:800;
+  cursor:pointer;
+  transition:.25s;
+  user-select:none;
+}
+.btn.primary{background:var(--primary); color:#020617;}
+.btn.success{background:var(--success); color:#020617;}
+.btn.danger{background:var(--danger); color:#fff;}
+.btn.warning{background:var(--warning); color:#020617;}
+.btn.ghost{
+  background: rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.10);
+  color: var(--text);
+}
+.btn:hover{transform:translateY(-2px); box-shadow:0 20px 45px rgba(34,211,238,0.25);}
+
+/* ===== CTA: VOLTAR & WHATSAPP ===== */
+.btn.back{
+  position:relative;
+  overflow:hidden;
+  padding:14px 20px;
+  border-radius:18px;
+  font-size:16px;
+  font-weight:950;
+  letter-spacing:.2px;
+  color:#06131a;
+  background: linear-gradient(135deg, rgba(34,211,238,0.98), rgba(99,102,241,0.98));
+  border:1px solid rgba(255,255,255,0.22);
+  box-shadow:
+    0 18px 45px rgba(34,211,238,0.22),
+    0 12px 34px rgba(99,102,241,0.18),
+    0 0 0 1px rgba(255,255,255,0.10) inset;
+  transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+}
+.btn.back::after{
+  content:"";
+  position:absolute;
+  top:-60%;
+  left:-40%;
+  width:60%;
+  height:220%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent);
+  transform: rotate(22deg) translateX(-140%);
+  opacity:0.85;
+  pointer-events:none;
+}
+.btn.back:hover{
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+  box-shadow:
+    0 24px 60px rgba(34,211,238,0.28),
+    0 18px 44px rgba(99,102,241,0.22),
+    0 0 0 1px rgba(255,255,255,0.12) inset;
+}
+.btn.back:hover::after{
+  transform: rotate(22deg) translateX(260%);
+  transition: transform .65s ease;
+}
+.btn.back.pulse{
+  animation: backPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes backPulse{
+  0%,100%{
+    box-shadow:
+      0 18px 45px rgba(34,211,238,0.22),
+      0 12px 34px rgba(99,102,241,0.18),
+      0 0 0 1px rgba(255,255,255,0.10) inset;
+  }
+  50%{
+    box-shadow:
+      0 26px 70px rgba(34,211,238,0.34),
+      0 18px 50px rgba(99,102,241,0.24),
+      0 0 0 1px rgba(255,255,255,0.14) inset;
+  }
+}
+
+/* Respeita preferência do sistema para reduzir animações */
+@media (prefers-reduced-motion: reduce){
+  .btn.back.pulse{animation:none;}
+  .btn.back:hover{transform:none;}
+}
+
+
+.btn.whatsapp{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  background:#25D366;
+  color:#ffffff;
+  border:1px solid rgba(255,255,255,0.10);
+}
+.btn.whatsapp:hover{box-shadow:0 22px 50px rgba(37,211,102,0.25);}
+
+.wa-icon{
+  width:18px;
+  height:18px;
+  display:inline-block;
+}
+.wa-icon svg{width:18px;height:18px;display:block;fill:currentColor;}
+
+body.light .btn.back{
+  background: linear-gradient(135deg, rgba(34,211,238,0.92), rgba(99,102,241,0.92));
+  border:1px solid rgba(15,23,42,0.18);
+  color:#06131a;
+}
+
+.grid-2{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:18px;
+}
+@media (max-width: 980px){
+  .grid-2{grid-template-columns:1fr;}
+}
+
+/* ===== LOGO ANIMADA ===== */
+.animated-logo{
+  font-size:22px;
+  font-weight:800;
+  letter-spacing:1px;
+  color:#22d3ee;
+  animation:brilho 3s ease-in-out infinite;
+}
+.animated-logo span{color:#6366f1;}
+@keyframes brilho{
+  0%{text-shadow:0 0 5px rgba(34, 211, 238, 0.815);}
+  50%{text-shadow:0 0 15px rgba(34,211,238,.8),0 0 30px rgba(99,102,241,.6);}
+  100%{text-shadow:0 0 5px rgba(34,211,238,.4);}
+}
+
+/* ===== BOTÃO SAIR DO SITE ===== */
+.sair-site{
+  margin-top:12px;
+  background:#ad1a1a !important;
+  color:#fff !important;
+  font-weight:800;
+  text-align:center;
+  border-radius:14px;
+  box-shadow:0 10px 30px rgba(239,68,68,.6);
+}
+.sair-site:hover{background:#a50e0e !important;}
+
+/* ===== NOTE ===== */
+.note{
+  background: rgba(34,211,238,0.08);
+  border:1px solid rgba(34,211,238,0.25);
+  padding:12px 14px;
+  border-radius:16px;
+  color: var(--text);
+  font-size:13px;
+  margin:12px 0 18px;
+}
+
+/* ===== FORM ===== */
+.form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+@media (max-width: 980px){
+  .form-grid{grid-template-columns:1fr;}
+}
+input[type="text"], input[type="password"], input[type="number"], input[type="date"], select, textarea{
+  width:100%;
+  background: rgba(2,6,23,0.9);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  color: var(--text);
+  padding: 11px 12px;
+  font-size: 14px;
+}
+textarea{min-height:90px; resize:vertical;}
+
+/* ===== FOOTER ===== */
+footer{
+  margin-top:20px;
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+}
+
+/* ===== SMALL LINKS ===== */
+.small-link{
+  color: var(--primary);
+  font-weight:800;
+  cursor:pointer;
+  text-decoration:none;
+}
+.small-link:hover{opacity:.85;}
+
+/* ===== CORREÇÃO TEMA CLARO ===== */
+body.light input,
+body.light select,
+body.light textarea{
+  background: #ffffff !important;
+  color: #020617 !important;
+  border: 1px solid #cbd5e1 !important;
+}
+body.light input::placeholder { color: #64748b !important; }
+body.light label { color: #475569 !important; }
+body.light .filters button { color: #020617 !important; }
+body.light .badge {
+  background: #f1f5f9 !important;
+  color: #020617 !important;
+  border: 1px solid #cbd5e1 !important;
+}
+body.light .badge.success { background: #dcfce7 !important; color: #166534 !important; }
+body.light .badge.warning { background: #fef3c7 !important; color: #92400e !important; }
+body.light .badge.danger { background: #fee2e2 !important; color: #991b1b !important; }
+
+/* ===== PRINT (janela) ===== */
+@media print{
+  body{background:#fff !important;color:#000 !important;}
+}
+
+/* ===== Clientes: Tabs + Cadastro ===== */
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:12px;}
+.tabs{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 14px 0;}
+.tab{
+  border:1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+  color: var(--text);
+  padding:10px 12px;
+  border-radius: 12px;
+  cursor:pointer;
+  font-weight:700;
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+}
+.tab:hover{transform: translateY(-1px); box-shadow: 0 10px 24px rgba(0,0,0,.35);}
+.tab.active{
+  background: linear-gradient(135deg, rgba(34,197,94,.20), rgba(59,130,246,.18));
+  border-color: rgba(34,197,94,.35);
+  box-shadow: 0 10px 30px rgba(34,197,94,.18);
+}
+.tab-panel{animation: fadeIn .18s ease;}
+@keyframes fadeIn{from{opacity:.65;transform: translateY(4px);}to{opacity:1;transform:none;}}
+
+.form-grid{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap:12px;
+  margin-top:12px;
+}
+.form-grid .field{margin:0;}
+.form-grid .span-2{grid-column: 1 / -1;}
+.form-grid textarea{resize: vertical; min-height: 70px;}
+.form-grid .actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:flex-start;margin-top:4px;}
+.muted{color: var(--muted);}
+@media (max-width: 900px){
+  .form-grid{grid-template-columns: 1fr;}
+  .form-grid .span-2{grid-column: auto;}
+}
+</style>
+</head>
+
+<body data-start-section="empresas" data-standalone="1">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo animated-logo">Gestão <span>Financeira</span></div>
+  <div class="sub" id="sidebarSub">Painel do Gestor (visão completa da área)</div>
+
+  <nav class="menu" id="menu">
+    <a data-role="ALL" data-section="dashboard" href="dashboardd.html">📊 Dashboard</a>
+    <a data-role="GESTOR,MASTER" data-section="caixa" href="caixa.html">🏦 Caixa</a>
+    <a data-role="ALL" data-section="operadores" href="operadores.html">🧑‍💼 Operadores</a>
+    <a data-role="ALL" data-section="clientes" href="clientes.html">👥 Clientes</a>
+    <a data-role="ALL" data-section="emprestimos" href="emprestimos.html">💰 Empréstimos (PF)</a>
+    <a data-role="GESTOR,MASTER" data-section="empresas" href="empresas.html">🏢 Empresas (CNPJ)</a>
+    <a data-role="GESTOR,MASTER" data-section="emprestimosPJ" href="emprestimosPJ.html">💼 Empréstimos (PJ)</a>
+    <a data-role="ALL" data-section="cobrancas" href="cobrancas.html">🧾 Cobranças</a>
+    <a data-role="ALL" data-section="inadimplentes" href="inadimplentes.html">⚠️ Pendências / Atrasos</a>
+    <a data-role="ALL" data-section="auditoria" href="auditoria.html">🧩 Auditoria (Ações)</a>
+    <a data-role="ALL" data-section="rotas" href="rotas.html">🗺️ Rotas (por dia)</a>
+    <a data-role="ALL" data-section="alertas" href="alertas.html">🚨 Alertas</a>
+    <a data-role="MASTER" data-section="gestores" href="gestores.html">🛡️ Gestores Financeiros</a>
+    <a data-role="MASTER" data-section="analises" href="analises.html">🔎 Análises de Clientes</a>
+    <a data-role="ALL" data-section="indicacoes" href="indicacoes.html">🤝 Indicações</a>
+    <a data-role="ALL" data-section="relatorios" href="relatorios.html">📈 Relatórios</a>
+    <a data-role="ALL" data-section="config" href="config.html">⚙ Configurações</a>
+    <a onclick="openSupportWhatsApp()"><span class="wa-icon" aria-hidden="true">
+  <svg viewBox="0 0 24 24" focusable="false">
+    <path d="M13.601 2.326A10.58 10.58 0 0 0 2.02 13.37c0 1.87.5 3.7 1.45 5.3L2 23.99l5.5-1.44a10.55 10.55 0 0 0 5.1 1.3h.01c5.84 0 10.58-4.74 10.58-10.58 0-2.83-1.1-5.49-3.1-7.49a10.5 10.5 0 0 0-7.49-3.1zm0 19.23h-.01a8.8 8.8 0 0 1-4.48-1.23l-.32-.19-3.27.86.87-3.19-.21-.33a8.82 8.82 0 0 1-1.34-4.69c0-4.86 3.96-8.82 8.82-8.82a8.76 8.76 0 0 1 6.24 2.59 8.76 8.76 0 0 1 2.59 6.23c0 4.86-3.96 8.82-8.82 8.82z"/>
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.669.149-.198.297-.768.967-.941 1.166-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.521-.074-.149-.669-1.612-.916-2.206-.242-.579-.487-.5-.669-.51-.173-.01-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.214 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+  </svg>
+</span><span>Suporte (WhatsApp)</span></a>
+    <a onclick="sairDoSite()" class="sair-site">❌ Sair do site</a>
+  </nav>
+</aside>
+
+<!-- OVERLAY (mobile) -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- MAIN -->
+<main class="main">
+
+  <div class="topbar">
+    <div>
+      <button id="menuBtn" class="btn menu-btn" onclick="toggleSidebar()" title="Menu">☰</button>
+      <button id="backBtn" class="btn back" onclick="goBack()" style="display:none;margin:0 12px 10px 0;">← Voltar</button>
+      <h1 id="pageTitle">Dashboard do Gestor</h1>
+      <div class="sub" style="margin:6px 0 0;color:var(--muted)" id="pageSub">
+        Acompanhe operadores, cobranças, clientes e empréstimos com data/horário e status.
+      </div>
+    </div>
+
+    <div class="top-right">
+      <div class="theme-toggle" onclick="toggleTheme()" title="Alternar tema">
+        <span id="themeIcon">🌙</span>
+      </div>
+      <button class="btn whatsapp" onclick="openSupportWhatsApp()" title="Falar com o suporte no WhatsApp" style="margin-left:10px;"><span class="wa-icon" aria-hidden="true">
+  <svg viewBox="0 0 24 24" focusable="false">
+    <path d="M13.601 2.326A10.58 10.58 0 0 0 2.02 13.37c0 1.87.5 3.7 1.45 5.3L2 23.99l5.5-1.44a10.55 10.55 0 0 0 5.1 1.3h.01c5.84 0 10.58-4.74 10.58-10.58 0-2.83-1.1-5.49-3.1-7.49a10.5 10.5 0 0 0-7.49-3.1zm0 19.23h-.01a8.8 8.8 0 0 1-4.48-1.23l-.32-.19-3.27.86.87-3.19-.21-.33a8.82 8.82 0 0 1-1.34-4.69c0-4.86 3.96-8.82 8.82-8.82a8.76 8.76 0 0 1 6.24 2.59 8.76 8.76 0 0 1 2.59 6.23c0 4.86-3.96 8.82-8.82 8.82z"/>
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.669.149-.198.297-.768.967-.941 1.166-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.521-.074-.149-.669-1.612-.916-2.206-.242-.579-.487-.5-.669-.51-.173-.01-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.214 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+  </svg>
+</span><span>Suporte</span></button>
+      <div class="user">
+        <strong id="role">Gestor Financeiro</strong>
+        <span id="name">Gestor - Área Centro</span>
+        <span id="areaText">Área: Centro</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <section id="dashboard" class="section active">
+    <div class="box">
+      <h2>
+        Visão Geral
+        <span style="font-size:12px;color:var(--muted);font-weight:800" id="rangeLabel">—</span>
+      </h2>
+
+      <div class="filters">
+        <div class="field">
+          <label>De</label>
+          <input type="date" id="fFrom">
+        </div>
+        <div class="field">
+          <label>Até</label>
+          <input type="date" id="fTo">
+        </div>
+        <div class="field">
+          <label>Operador</label>
+          <select id="fOperator"></select>
+        </div>
+        <button onclick="applyFilters()">Aplicar</button>
+        <button class="secondary" onclick="resetFilters()">Últimos 7 dias</button>
+        <button class="btn ghost" onclick="printElement('dashboardPrint','Dashboard')" style="align-self:flex-end;">🖨️ Imprimir</button>
+      </div>
+
+      <div id="dashboardPrint">
+        <div class="cards" id="kpiCards"></div>
+        <div class="note">
+          ✅ <strong>Gestor vê tudo</strong> do que os operadores fazem: <u>cadastros</u>, <u>cobranças</u>, <u>empréstimos</u>,
+          <u>datas/horários</u>, <u>ativos/inativos</u>, <u>pendências</u> e <u>rotas por dia</u>.
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="box">
+        <h2>
+          Últimas Ações (Auditoria)
+          <span style="display:flex;gap:10px;align-items:center;">
+            <a class="small-link" onclick="openSection('auditoria')">Ver tudo →</a>
+            <button class="btn ghost" onclick="printElement('printLastActions','Últimas Ações')">🖨️</button>
+          </span>
+        </h2>
+        <div id="printLastActions">
+          <table>
+            <thead>
+              <tr>
+                <th>Quando</th>
+                <th>Operador</th>
+                <th>Ação</th>
+                <th>Detalhe</th>
+                <th>Valor</th>
+              </tr>
+            </thead>
+            <tbody id="tblLastActions"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="box">
+        <h2>
+          Cobranças do Período
+          <span style="display:flex;gap:10px;align-items:center;">
+            <a class="small-link" onclick="openSection('cobrancas')">Ver cobranças →</a>
+            <button class="btn ghost" onclick="printElement('printLastCollections','Cobranças do Período')">🖨️</button>
+          </span>
+        </h2>
+        <div id="printLastCollections">
+          <table>
+            <thead>
+              <tr>
+                <th>Quando</th>
+                <th>Operador</th>
+                <th>Cliente</th>
+                <th>Resultado</th>
+                <th>Valor</th>
+              </tr>
+            </thead>
+            <tbody id="tblLastCollections"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CAIXA -->
+  <section id="caixa" class="section">
+    <div class="box">
+      <h2>
+        Caixa (Gestor / Operadores)
+        <span style="display:flex;gap:10px;align-items:center;">
+          <button class="btn ghost" onclick="printElement('printCaixa','Caixa')">🖨️ Imprimir</button>
+        </span>
+      </h2>
+
+      <div class="note">
+        Regra: <strong>somente Gestor/Master libera caixa</strong> para operadores. Operador registra recebimentos, mas a liberação de saldo operacional é controlada pelo Gestor.
+      </div>
+
+      <div id="printCaixa">
+        <div class="grid-2">
+          <div class="box" style="margin-bottom:0;">
+            <h2 style="margin-bottom:10px;">Caixa Central (Gestor)</h2>
+            <div class="cards" id="cashCentralCards"></div>
+
+            <div class="filters">
+              <div class="field">
+                <label>Operador</label>
+                <select id="cashToOperator"></select>
+              </div>
+              <div class="field">
+                <label>Valor a liberar</label>
+                <input type="number" id="cashAmount" min="0" step="1" placeholder="Ex: 500">
+              </div>
+              <button onclick="cashReleaseToOperator()">Liberar</button>
+              <button class="secondary" onclick="renderCaixa()">Atualizar</button>
+            </div>
+
+            <div class="note" id="cashRoleNote"></div>
+          </div>
+
+          <div class="box" style="margin-bottom:0;">
+            <h2 style="margin-bottom:10px;">Movimentações (últimas)</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Quando</th>
+                  <th>Tipo</th>
+                  <th>De</th>
+                  <th>Para</th>
+                  <th>Valor</th>
+                </tr>
+              </thead>
+              <tbody id="tblCashLedger"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OPERADORES -->
+  <section id="operadores" class="section">
+    <div class="box">
+      <h2>
+        Operadores (online/offline, IP, aparelho, limites e ações)
+        <span style="display:flex;gap:10px;align-items:center;">
+          <button class="btn ghost" onclick="printElement('printOperadores','Operadores')">🖨️ Imprimir</button>
+        </span>
+      </h2>
+
+      <div class="note">
+        Sinal <span class="badge success">🟢 ONLINE</span> / <span class="badge danger">🔴 OFFLINE</span> baseado na sessão (demo).
+        Políticas (limite e parcelas) só podem ser ajustadas por <strong>Gestor/Master</strong>.
+      </div>
+
+      <button class="btn primary" onclick="abrirFormOperador()" style="margin:6px 0 10px;">
+        + Criar Operador
+      </button>
+
+      <!-- FORMULÁRIO -->
+      <div id="formOperador" style="display:none; gap:10px; margin:14px 0 16px;">
+        <div class="form-grid">
+          <input id="opNome" placeholder="Nome do operador">
+          <input id="opLogin" placeholder="Login (nome)">
+        </div>
+        <div class="form-grid">
+          <input id="opSenha" type="password" placeholder="Senha (demo)">
+          <select id="opStatus">
+            <option value="ATIVO">ATIVO</option>
+            <option value="INATIVO">INATIVO</option>
+          </select>
+        </div>
+        <div class="form-grid">
+          <input id="opArea" placeholder="Área (ex: Centro)">
+          <input id="opMaxLoan" type="number" min="0" placeholder="Limite empréstimo (ex: 5000)">
+        </div>
+        <div class="form-grid">
+          <input id="opMaxInstall" type="number" min="1" max="46" placeholder="Parcelas máx (1 a 46)">
+          <div style="display:flex; gap:10px; align-items:flex-end;">
+            <button class="btn success" onclick="salvarOperador()">Salvar</button>
+            <button class="btn ghost" onclick="cancelarOperador()">Cancelar</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="filters" style="margin-top:8px;">
+        <div class="field">
+          <label>Status</label>
+          <select id="opFilterStatus" onchange="renderOperadores()">
+            <option value="TODOS">TODOS</option>
+            <option value="ATIVO">ATIVO</option>
+            <option value="INATIVO">INATIVO</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Buscar</label>
+          <input id="opSearch" placeholder="Nome ou login..." oninput="renderOperadores()">
+        </div>
+      </div>
+
+      <div id="printOperadores">
+        <table>
+          <thead>
+            <tr>
+              <th>Operador</th>
+              <th>Status</th>
+              <th>Online</th>
+              <th>Aparelho</th>
+              <th>IP</th>
+              <th>Clientes</th>
+              <th>Cobranças (período)</th>
+              <th>Recebido (período)</th>
+              <th>Limite</th>
+              <th>Parcelas</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="listaOperadores"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="box">
+      <h2>Políticas de Empréstimo por Operador (Gestor/Master)</h2>
+      <div class="filters">
+        <div class="field">
+          <label>Operador</label>
+          <select id="polOperator"></select>
+        </div>
+        <div class="field">
+          <label>Limite máximo (R$)</label>
+          <input type="number" id="polMaxLoan" min="0" step="1">
+        </div>
+        <div class="field">
+          <label>Parcelas máximas (1-46)</label>
+          <input type="number" id="polMaxInstall" min="1" max="46" step="1">
+        </div>
+        <button onclick="savePolicies()">Salvar políticas</button>
+      </div>
+      <div class="note" id="polNote"></div>
+    </div>
+  </section>
+
+  <!-- DETALHE DO OPERADOR -->
+  <section id="operadorDetalhe" class="section">
+    <div class="box">
+      <h2>
+        <span id="opDetailTitle">Operador</span>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn ghost" onclick="openSection('operadores')">← Voltar</button>
+          <button class="btn primary" onclick="openSection('rotas')">Ver rotas</button>
+          <button class="btn ghost" onclick="printElement('printOperadorDetalhe','Detalhes do Operador')">🖨️ Imprimir</button>
+        </div>
+      </h2>
+
+      <div class="filters">
+        <div class="field">
+          <label>De</label>
+          <input type="date" id="opFrom">
+        </div>
+        <div class="field">
+          <label>Até</label>
+          <input type="date" id="opTo">
+        </div>
+        <button onclick="renderOperadorDetalhe()">Atualizar</button>
+      </div>
+
+      <div id="printOperadorDetalhe">
+        <div class="cards" id="opDetailCards"></div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="box">
+        <h2>Ações (Auditoria)</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Quando</th>
+              <th>Ação</th>
+              <th>Entidade</th>
+              <th>Detalhe</th>
+              <th>Valor</th>
+            </tr>
+          </thead>
+          <tbody id="opDetailActions"></tbody>
+        </table>
+      </div>
+
+      <div class="box">
+        <h2>Cobranças</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Quando</th>
+              <th>Cliente</th>
+              <th>Resultado</th>
+              <th>Valor</th>
+              <th>Obs</th>
+            </tr>
+          </thead>
+          <tbody id="opDetailCollections"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="box">
+      <h2>Empréstimos do Operador</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Principal</th>
+            <th>Status</th>
+            <th>Parcelas</th>
+            <th>Vencidos</th>
+            <th>Em aberto</th>
+          </tr>
+        </thead>
+        <tbody id="opDetailLoans"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- CLIENTES -->
+  <section id="clientes" class="section">
+    <div class="box">
+      <div class="section-head">
+        <h2 style="margin:0;">Clientes (com pendências, score e empréstimos)</h2>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;">
+          <button class="btn ghost" onclick="printElement('printClientes','Clientes')">🖨️ Imprimir</button>
+        </div>
+      </div>
+
+      <div class="tabs" role="tablist" aria-label="Clientes">
+        <button id="tabClientesLista" class="tab active" onclick="switchClientesTab('lista')" role="tab" aria-selected="true">📋 Lista</button>
+        <button id="tabClientesCadastro" class="tab" onclick="switchClientesTab('cadastro')" role="tab" aria-selected="false">➕ Cadastrar cliente</button>
+      </div>
+
+      <!-- TAB: LISTA -->
+      <div id="clientesTabLista" class="tab-panel" role="tabpanel">
+        <div class="filters">
+          <div class="field">
+            <label>Operador</label>
+            <select id="cOperator" onchange="renderClientes()"></select>
+          </div>
+          <div class="field">
+            <label>Status</label>
+            <select id="cStatus" onchange="renderClientes()">
+              <option value="TODOS">TODOS</option>
+              <option value="ATIVO">ATIVO</option>
+              <option value="INATIVO">INATIVO</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Score</label>
+            <select id="cScore" onchange="renderClientes()">
+              <option value="TODOS">TODOS</option>
+              <option value="BOM">BOM</option>
+              <option value="REGULAR">REGULAR</option>
+              <option value="DIFICIL">DIFÍCIL</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Buscar</label>
+            <input id="cSearch" placeholder="Nome..." oninput="renderClientes()">
+          </div>
+          <button class="btn warning" onclick="createAnalysisRequestFromFilters()">📌 Pedir análise (Master)</button>
+          <button class="btn" onclick="switchClientesTab('cadastro')">➕ Novo cliente</button>
+        </div>
+
+        <div id="printClientes">
+          <table>
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Operador</th>
+                <th>Status</th>
+                <th>Pendências</th>
+                <th>Score</th>
+                <th>Empréstimos</th>
+                <th>Vencidos</th>
+                <th>Indicações</th>
+              </tr>
+            </thead>
+            <tbody id="tblClientes"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB: CADASTRO -->
+      <div id="clientesTabCadastro" class="tab-panel" role="tabpanel" style="display:none;">
+        <div class="note">
+          Operador cadastra <strong>Clientes</strong> com documentos e dados completos. Em produção, estes dados serão enviados com segurança para o servidor.
+        </div>
+
+        <form id="formNovoCliente" class="form-grid" onsubmit="event.preventDefault(); submitNovoCliente();">
+          <div class="field span-2">
+            <label>Nome completo *</label>
+            <input id="ncNome" required placeholder="Ex.: Maria da Silva">
+          </div>
+
+          <div class="field">
+            <label>CPF *</label>
+            <input id="ncCpf" required inputmode="numeric" placeholder="000.000.000-00" oninput="maskCPF(this)">
+          </div>
+          <div class="field">
+            <label>RG *</label>
+            <input id="ncRg" required placeholder="RG">
+          </div>
+
+          <div class="field">
+            <label>CEP *</label>
+            <input id="ncCep" required inputmode="numeric" placeholder="00000-000" oninput="maskCEP(this)" onblur="lookupCEP()">
+            <small id="cepStatus" class="muted"></small>
+          </div>
+          <div class="field">
+            <label>Número *</label>
+            <input id="ncNumero" required placeholder="Nº">
+          </div>
+
+          <div class="field span-2">
+            <label>Logradouro *</label>
+            <input id="ncLogradouro" required placeholder="Rua / Avenida">
+          </div>
+          <div class="field">
+            <label>Complemento</label>
+            <input id="ncComplemento" placeholder="Apto, Bloco, Casa...">
+          </div>
+          <div class="field">
+            <label>Bairro *</label>
+            <input id="ncBairro" required>
+          </div>
+          <div class="field">
+            <label>Cidade *</label>
+            <input id="ncCidade" required>
+          </div>
+          <div class="field">
+            <label>UF *</label>
+            <input id="ncUf" required maxlength="2" placeholder="SP">
+          </div>
+
+          <div class="field">
+            <label>Renda mensal *</label>
+            <input id="ncRenda" required inputmode="decimal" placeholder="R$ 0,00" oninput="maskMoneyBR(this)">
+          </div>
+
+          <div class="field span-2">
+            <label>Bens (opcional)</label>
+            <textarea id="ncBens" rows="2" placeholder="Ex.: moto, carro, casa, terreno..."></textarea>
+          </div>
+
+          <div class="field">
+            <label>Nome da mãe *</label>
+            <input id="ncMae" required>
+          </div>
+          <div class="field">
+            <label>Nome do pai *</label>
+            <input id="ncPai" required>
+          </div>
+
+          <div class="field span-2">
+            <label>Operador responsável *</label>
+            <select id="ncOperator"></select>
+            <small class="muted">Operador define “responsável” e controle de cobranças.</small>
+          </div>
+
+          <div class="field span-2">
+            <label>Documento com foto (RG/CNH) *</label>
+            <input id="ncDocFoto" type="file" required accept="image/*,application/pdf">
+            <small class="muted">Envie foto ou PDF do documento.</small>
+          </div>
+
+          <div class="field span-2">
+            <label>Comprovante de residência *</label>
+            <input id="ncCompResid" type="file" required accept="image/*,application/pdf">
+            <small class="muted">Conta de luz/água/telefone ou equivalente.</small>
+          </div>
+
+          <div class="actions span-2">
+            <button type="submit" class="btn success">✅ Salvar cliente</button>
+            <button type="button" class="btn ghost" onclick="resetNovoClienteForm()">Limpar</button>
+            <button type="button" class="btn" onclick="switchClientesTab('lista')">Voltar para lista</button>
+          </div>
+
+          <div id="ncMsg" class="note span-2" style="display:none;"></div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- EMPRÉSTIMOS PF -->
+  <section id="emprestimos" class="section">
+    <div class="box">
+      <h2>
+        Empréstimos (PF) — respeita limite do operador e parcelas até 46
+        <span style="display:flex;gap:10px;align-items:center;">
+          <button class="btn ghost" onclick="printElement('printEmprestimosPF','Empréstimos PF')">🖨️ Imprimir</button>
+        </span>
+      </h2>
+
+      <div class="note">
+        Regra: <strong>Gestor/Master define limite máximo e parcelas máximas por operador</strong>. Empréstimos acima do limite geram <strong>alerta</strong>.
+      </div>
+
+      <div class="filters">
+        <div class="field">
+          <label>De</label>
+          <input type="date" id="lFrom">
+        </div>
+        <div class="field">
+          <label>Até</label>
+          <input type="date" id="lTo">
+        </div>
+        <div class="field">
+          <label>Operador</label>
+          <select id="lOperator"></select>
+        </div>
+        <button onclick="renderEmprestimos()">Filtrar</button>
+      </div>
+
+      <div id="printEmprestimosPF" class="grid-2">
+        <div class="box" style="margin-bottom:0;">
+          <h2 style="margin-bottom:10px;">Ofertas (Empréstimos oferecidos)</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Quando</th>
+                <th>Operador</th>
+                <th>Cliente</th>
+                <th>Status</th>
+                <th>Valor</th>
+              </tr>
+            </thead>
+            <tbody id="tblOffers"></tbody>
+          </table>
+        </div>
+
+        <div class="box" style="margin-bottom:0;">
+          <h2 style="margin-bottom:10px;">Empréstimos feitos</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Quando</th>
+                <th>Operador</th>
+                <th>Cliente</th>
+                <th>Status</th>
+                <th>Principal</th>
+              </tr>
+            </thead>
+            <tbody id="tblLoans"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EMPRESAS (CNPJ) -->
+  <section id="empresas" class="section">
+    <div class="box">
+      <h2>
+        Empresas (Cadastro PJ)
+        <span style="display:flex;gap:10px;align-items:center;">
+          <button class="btn ghost" onclick="printElement('printEmpresas','Empresas')">🖨️ Imprimir</button>
+        </span>
+      </h2>
+
+      <div class="note">
+        Cadastro PJ: CNPJ, Razão Social, Endereço, Documentos (nomes/links no demo), Dono, Dívidas, Funcionários.
+      </div>
+
+      <div class="filters">
+        <button class="btn primary" onclick="toggleEmpresaForm()">+ Cadastrar Empresa</button>
+        <div class="field">
+          <label>Buscar</label>
+          <input id="eSearch" placeholder="CNPJ ou Razão Social..." oninput="renderEmpresas()">
+        </div>
+      </div>
+
+      <div id="empresaForm" style="display:none; gap:10px; margin:14px 0 16px;">
+        <div class="form-grid">
+          <input id="eCnpj" placeholder="CNPJ (apenas números ou formatado)">
+          <input id="eRazao" placeholder="Razão Social">
+        </div>
+        <div class="form-grid">
+          <input id="eEndereco" placeholder="Endereço completo">
+          <input id="eDono" placeholder="Dono / Responsável">
+        </div>
+        <div class="form-grid">
+          <select id="eDividas">
+            <option value="NAO">Empresa com dívidas? NÃO</option>
+            <option value="SIM">Empresa com dívidas? SIM</option>
+          </select>
+          <input id="eFuncionarios" type="number" min="0" placeholder="Qtd. funcionários">
+        </div>
+        <textarea id="eDocs" placeholder="Documentos da empresa (liste nomes, links, observações...)"></textarea>
+
+        <div style="display:flex; gap:10px;">
+          <button class="btn success" onclick="saveEmpresa()">Salvar</button>
+          <button class="btn ghost" onclick="toggleEmpresaForm(false)">Cancelar</button>
+        </div>
+      </div>
+
+      <div id="printEmpresas">
+        <table>
+          <thead>
+            <tr>
+              <th>CNPJ</th>
+              <th>Razão Social</th>
+              <th>Endereço</th>
+              <th>Dono</th>
+              <th>Dívidas</th>
+              <th>Funcionários</th>
+              <th>Docs</th>
+            </tr>
+          </thead>
+          <tbody id="tblEmpresas"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- EMPRÉSTIMOS PJ -->
+  <section id="emprestimosPJ" class="section">
+    <div class="box">
+      <h2>
+        Empréstimos (PJ) — Empresas/CNPJ
+        <span style="display:flex;gap:10px;align-items:center;">
+          <button class="btn ghost" onclick="printElement('printEmprestimosPJ','Empréstimos PJ')">🖨️ Imprimir</button>
+        </span>
+      </h2>
+
+      <div class="filters">
+        <div class="field">
+          <label>De</label>
+          <input type="date" id="pjFrom">
+        </div>
+        <div class="field">
+          <label>Até</label>
+          <input type="date" id="pjTo">
+        </div>
+        <div class="field">
+          <label>Operador</label>
+          <select id="pjOperator"></select>
+        </div>
+        <div class="field">
+          <label>Empresa</label>
+          <select id="pjEmpresa"></select>
+        </div>
+        <button onclick="renderEmprestimosPJ()">Filtrar</button>
+      </div>
+
+      <div id="printEmprestimosPJ">
+        <table>
+          <thead>
+            <tr>
+              <th>Quando</th>
+              <th>Operador</th>
+              <th>Empresa</th>
+              <th>CNPJ</th>
+              <th>Status</th>
+              <th>Principal</th>
+              <th>Parcelas</th>
+            </tr>
+          </thead>
+          <tbody id="tblLoansPJ"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- COBRANÇAS -->
+  <section id="cobrancas" class="section">
+    <div class="box">
+      <h2>
+        Cobranças (feitas, faltantes, resultados, horários)
+        <span style="display:flex;gap:10px;align-items:center;">
+          <button class="btn ghost" onclick="printElement('printCobrancas','Cobranças')">🖨️ Imprimir</button>
+        </span>
+      </h2>
+
+      <div class="filters">
+        <div class="field">
+          <label>De</label>
+          <input type="date" id="colFrom">
+        </div>
+        <div class="field">
+          <label>Até</label>
+          <input type="date" id="colTo">
+        </div>
+        <div class="field">
+          <label>Operador</label>
+          <select id="colOperator"></select>
+        </div>
+        <div class="field">
+          <label>Resultado</label>
+          <select id="colResult" onchange="renderCobrancas()">
+            <option value="TODOS">TODOS</option>
+            <option value="SUCESSO">SUCESSO</option>
+            <option value="PARCIAL">PARCIAL</option>
+            <option value="PROMESSA">PROMESSA</option>
+            <option value="NAO_PAGOU">NÃO PAGOU</option>
+            <option value="NAO_ENCONTRADO">NÃO ENCONTRADO</option>
+          </select>
+        </div>
+        <button onclick="renderCobrancas()">Filtrar</button>
+      </div>
+
+      <div class="cards" id="colKpis"></div>
+
+      <div id="printCobrancas">
+        <table>
+          <thead>
+            <tr>
+              <th>Quando</th>
+              <th>Operador</th>
+              <th>Cliente</th>
+              <th>Parcela</th>
+              <th>Resultado</th>
+              <th>Valor</th>
+              <th>Obs</th>
+            </tr>
+          </thead>
+          <tbody id="tblCobrancas"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- INADIMPLENTES / PENDÊNCIAS -->
+  <section id="inadimplentes" class="section">
+    <div class="box">
+      <h2>
+        Pendências / Atrasos (parcelas vencidas + pendências abertas)
+        <span style="display:flex;gap:10px;align-items:center;">
+          <button class="btn ghost" onclick="printElement('printPendencias','Pendências / Atrasos')">🖨️ Imprimir</button>
+        </span>
+      </h2>
+
+      <div class="filters">
+        <div class="field">
+          <label>Operador</label>
+          <select id="pOperator" onchange="renderPendencias()"></select>
+        </div>
+        <div class="field">
+          <label>Apenas vencidos?</label>
+          <select id="pOnlyOverdue" onchange="renderPendencias()">
+            <option value="NAO">Não</option>
+            <option value="SIM">Sim</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="printPendencias">
+        <table>
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Operador</th>
+              <th>Parcela</th>
+              <th>Vencimento</th>
+              <th>Status</th>
+              <th>Em aberto</th>
+              <th>Última cobrança</th>
+            </tr>
+          </thead>
+          <tbody id="tblPendencias"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- AUDITORIA -->
+  <section id="auditoria" class="section">
+    <div class="box">
+      <h2>
+        Auditoria (todas as ações dos operadores)
+        <span style="display:flex;gap:10px;align-items:center;">
+          <button class="btn ghost" onclick="printElement('printAuditoria','Auditoria')">🖨️ Imprimir</button>
+        </span>
+      </h2>
+
+      <div class="filters">
+        <div class="field">
+          <label>De</label>
+          <input type="date" id="aFrom">
+        </div>
+        <div class="field">
+          <label>Até</label>
+          <input type="date" id="aTo">
+        </div>
+        <div class="field">
+          <label>Operador</label>
+          <select id="aOperator"></select>
+        </div>
+        <div class="field">
+          <label>Ação</label>
+          <select id="aType" onchange="renderAuditoria()">
+            <option value="TODOS">TODOS</option>
+            <option value="CLIENT_CREATED">CLIENT_CREATED</option>
+            <option value="CLIENT_UPDATED">CLIENT_UPDATED</option>
+            <option value="LOAN_OFFERED">LOAN_OFFERED</option>
+            <option value="LOAN_DISBURSED">LOAN_DISBURSED</option>
+            <option value="COLLECTION_DONE">COLLECTION_DONE</option>
+            <option value="PAYMENT_RECEIVED">PAYMENT_RECEIVED</option>
+            <option value="CASH_RELEASED">CASH_RELEASED</option>
+            <option value="POLICY_UPDATED">POLICY_UPDATED</option>
+            <option value="COMPANY_CREATED">COMPANY_CREATED</option>
+          </select>
+        </div>
+        <button onclick="renderAuditoria()">Filtrar</button>
+      </div>
+
+      <div id="printAuditoria">
+        <table>
+          <thead>
+            <tr>
+              <th>Quando</th>
+              <th>Operador</th>
+              <th>Ação</th>
+              <th>Entidade</th>
+              <th>Detalhe</th>
+              <th>Valor</th>
+            </tr>
+          </thead>
+          <tbody id="tblAuditoria"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROTAS -->
+  <section id="rotas" class="section">
+    <div class="box">
+      <h2>
+        Rotas por dia (endpoints acessados) — por operador
+        <span style="display:flex;gap:10px;align-items:center;">
+          <button class="btn ghost" onclick="printElement('printRotas','Rotas')">🖨️ Imprimir</button>
+        </span>
+      </h2>
+
+      <div class="filters">
+        <div class="field">
+          <label>Data</label>
+          <input type="date" id="rDate" onchange="renderRotas()">
+        </div>
+        <div class="field">
+          <label>Operador</label>
+          <select id="rOperator" onchange="renderRotas()"></select>
+        </div>
+        <div class="field">
+          <label>Apenas erros?</label>
+          <select id="rOnlyErrors" onchange="renderRotas()">
+            <option value="NAO">Não</option>
+            <option value="SIM">Sim</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="note">
+        Aqui é a <strong>rota do sistema</strong>. Se quiser rota de rua (GPS/visitas), dá para evoluir com check-in por cliente (backend).
+      </div>
+
+      <div id="printRotas">
+        <table>
+          <thead>
+            <tr>
+              <th>Hora</th>
+              <th>Operador</th>
+              <th>Método</th>
+              <th>Rota</th>
+              <th>Status</th>
+              <th>IP</th>
+            </tr>
+          </thead>
+          <tbody id="tblRotas"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ALERTAS -->
+  <section id="alertas" class="section">
+    <div class="box">
+      <h2>
+        Alertas (Gestor e Operadores)
+        <span style="display:flex;gap:10px;align-items:center;">
+          <button class="btn ghost" onclick="renderAlertas()">Atualizar</button>
+          <button class="btn ghost" onclick="printElement('printAlertas','Alertas')">🖨️ Imprimir</button>
+        </span>
+      </h2>
+
+      <div class="note">
+        Alertas automáticos (demo): empréstimo acima do limite, parcelas vencidas, empresa com dívidas, tentativas sem sucesso, etc.
+      </div>
+
+      <div id="printAlertas">
+        <table>
+          <thead>
+            <tr>
+              <th>Quando</th>
+              <th>Nível</th>
+              <th>Para</th>
+              <th>Assunto</th>
+              <th>Detalhe</th>
+            </tr>
+          </thead>
+          <tbody id="tblAlertas"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- GESTORES (MASTER) -->
+  <section id="gestores" class="section">
+    <div class="box">
+      <h2>
+        Criar Gestores Financeiros (MASTER)
+        <span style="display:flex;gap:10px;align-items:center;">
+          <button class="btn ghost" onclick="printElement('printGestores','Gestores')">🖨️ Imprimir</button>
+        </span>
+      </h2>
+
+      <div class="note">
+        Somente <strong>MASTER</strong> cria gestores. Em produção, isso vira controle real de usuários/roles (backend).
+      </div>
+
+      <div class="filters">
+        <div class="field"><label>Nome</label><input id="gNome" placeholder="Nome do gestor"></div>
+        <div class="field"><label>Login</label><input id="gLogin" placeholder="Login"></div>
+        <div class="field"><label>Senha</label><input id="gSenha" type="password" placeholder="Senha (demo)"></div>
+        <div class="field"><label>Área</label><input id="gArea" placeholder="Ex: Centro"></div>
+        <button onclick="saveGestor()">Criar gestor</button>
+      </div>
+
+      <div id="printGestores">
+        <table>
+          <thead>
+            <tr>
+              <th>Gestor</th>
+              <th>Login</th>
+              <th>Área</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="tblGestores"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ANÁLISES (MASTER) -->
+  <section id="analises" class="section">
+    <div class="box">
+      <h2>
+        Pedidos de Análise de Cliente (MASTER)
+        <span style="display:flex;gap:10px;align-items:center;">
+          <button class="btn ghost" onclick="renderAnalises()">Atualizar</button>
+          <button class="btn ghost" onclick="printElement('printAnalises','Análises de Clientes')">🖨️ Imprimir</button>
+        </span>
+      </h2>
+
+      <div class="note">
+        Aqui entra o fluxo “Admin pesquisar vida/conduta do cliente”. No demo, você registra pedido + status (Pendente/Em análise/Aprovado/Reprovado).
+      </div>
+
+      <div class="filters">
+        <div class="field">
+          <label>Status</label>
+          <select id="anStatus" onchange="renderAnalises()">
+            <option value="TODOS">TODOS</option>
+            <option value="PENDENTE">PENDENTE</option>
+            <option value="EM_ANALISE">EM ANÁLISE</option>
+            <option value="APROVADO">APROVADO</option>
+            <option value="REPROVADO">REPROVADO</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Buscar</label>
+          <input id="anSearch" placeholder="Cliente/Operador..." oninput="renderAnalises()">
+        </div>
+      </div>
+
+      <div id="printAnalises">
+        <table>
+          <thead>
+            <tr>
+              <th>Quando</th>
+              <th>Cliente</th>
+              <th>Operador</th>
+              <th>Motivo</th>
+              <th>Status</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody id="tblAnalises"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- INDICAÇÕES -->
+  <section id="indicacoes" class="section">
+    <div class="box">
+      <h2>
+        Indicações
+        <span style="display:flex;gap:10px;align-items:center;">
+          <button class="btn ghost" onclick="printElement('printIndicacoes','Indicações')">🖨️ Imprimir</button>
+        </span>
+      </h2>
+
+      <div class="note">
+        Mostra quantos clientes indicaram outros e quais operadores geraram mais indicações.
+      </div>
+
+      <div id="printIndicacoes">
+        <table>
+          <thead>
+            <tr>
+              <th>Operador</th>
+              <th>Clientes</th>
+              <th>Clientes que indicaram</th>
+              <th>Total de indicações</th>
+            </tr>
+          </thead>
+          <tbody id="tblIndicacoes"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- RELATÓRIOS -->
+  <section id="relatorios" class="section">
+    <div class="box">
+      <h2>
+        Relatórios (resumo rápido)
+        <span style="display:flex;gap:10px;align-items:center;">
+          <button class="btn ghost" onclick="printElement('printRelatorios','Relatórios')">🖨️ Imprimir</button>
+        </span>
+      </h2>
+
+      <div class="note">
+        Aqui é o “resumo do resumo”. Dá para evoluir para PDF/Excel depois com backend.
+      </div>
+
+      <div id="printRelatorios">
+        <table>
+          <thead>
+            <tr>
+              <th>Métrica</th>
+              <th>Valor</th>
+              <th>Observação</th>
+            </tr>
+          </thead>
+          <tbody id="tblRelatorios"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONFIG -->
+  <section id="config" class="section">
+    <div class="box">
+      <h2>Configurações (modo demo)</h2>
+
+      <div class="note">
+        ⚙️ Isto é um <strong>HTML demo</strong> (sem backend).  
+        Use abaixo para simular “MASTER / GESTOR / OPERADOR” e ver o layout mudando.
+      </div>
+
+      <div class="filters">
+        <div class="field">
+          <label>Perfil</label>
+          <select id="cfgRole" onchange="applyRole()">
+            <option value="MASTER">MASTER</option>
+            <option value="GESTOR" selected>GESTOR</option>
+            <option value="OPERADOR">OPERADOR</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Nome</label>
+          <input id="cfgName" placeholder="Seu nome...">
+        </div>
+        <div class="field">
+          <label>Área</label>
+          <input id="cfgArea" placeholder="Ex: Centro">
+        </div>
+        <button onclick="applyRole()">Salvar Perfil</button>
+        <button class="secondary" onclick="resetDemo()">Resetar dados demo</button>
+      </div>
+
+      <div class="note" id="cfgNote"></div>
+    </div>
+  </section>
+
+  <footer>© 2025 SistemaFin</footer>
+</main>
+
+<script>
+/* ===== MOBILE SIDEBAR (gaveta) ===== */
+function openSidebar(){ document.body.classList.add("sidebar-open"); }
+function closeSidebar(){ document.body.classList.remove("sidebar-open"); }
+function toggleSidebar(){ document.body.classList.toggle("sidebar-open"); }
+document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closeSidebar(); });
+
+/* =============================
+   UTIL
+   ============================= */
+const pad = n => String(n).padStart(2, '0');
+function toISODate(d){
+  const dt = new Date(d);
+  return `${dt.getFullYear()}-${pad(dt.getMonth()+1)}-${pad(dt.getDate())}`;
+}
+function toLocalDateTime(d){
+  const dt = new Date(d);
+  return `${pad(dt.getDate())}/${pad(dt.getMonth()+1)}/${dt.getFullYear()} ${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+}
+function fmtMoney(v){
+  const n = Number(v||0);
+  return n.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+}
+function daysAgo(n){
+  const d = new Date();
+  d.setDate(d.getDate() - n);
+  return d;
+}
+function rand(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
+function uuid(){ return Math.random().toString(16).slice(2) + "-" + Date.now().toString(16); }
+function inRange(iso, fromISO, toISO){
+  const d = new Date(iso);
+  const from = new Date(fromISO + "T00:00:00");
+  const to = new Date(toISO + "T23:59:59");
+  return d >= from && d <= to;
+}
+
+/* =============================
+   STORAGE
+   ============================= */
+function lsGet(key, fallback){
+  try{
+    const v = localStorage.getItem(key);
+    return v ? JSON.parse(v) : fallback;
+  }catch(e){ return fallback; }
+}
+function lsSet(key, value){ localStorage.setItem(key, JSON.stringify(value)); }
+
+/* =============================
+   SESSÕES (DEMO)
+   ============================= */
+const operatorSessionsDefault = [
+  { operator_id: "op1", online: true, device: "Android", ip: "189.45.22.10", last_seen: "Agora" },
+  { operator_id: "op2", online: false, device: "PC", ip: "177.90.10.22", last_seen: "2h atrás" },
+  { operator_id: "op3", online: false, device: "Android", ip: "186.33.98.7", last_seen: "Ontem" },
+  { operator_id: "op4", online: true, device: "iPhone", ip: "191.12.44.88", last_seen: "Agora" }
+];
+function getSessions(){ return lsGet("operator_sessions", operatorSessionsDefault); }
+function setSessions(v){ lsSet("operator_sessions", v); }
+
+/* =============================
+   PERFIL (demo)
+   ============================= */
+const defaultUser = { role:"GESTOR", name:"Gestor - Área Centro", area:"Centro", id:"u-gestor-demo" };
+function getUser(){ return lsGet("currentUser", defaultUser); }
+function setUser(u){ lsSet("currentUser", u); }
+
+/* =============================
+   CAIXA / POLÍTICAS / ALERTAS
+   ============================= */
+function getCashLedger(){ return lsGet("cash_ledger", []); }
+function setCashLedger(v){ lsSet("cash_ledger", v); }
+
+function getCashBalances(){
+  return lsGet("cash_balances", { central: 200000, operators: {} });
+}
+function setCashBalances(v){ lsSet("cash_balances", v); }
+
+function getPolicies(){
+  // { [operator_id]: {maxLoan: number, maxInstallments: number} }
+  return lsGet("loan_policies", {});
+}
+function setPolicies(v){ lsSet("loan_policies", v); }
+
+function getAlerts(){ return lsGet("alerts", []); }
+function setAlerts(v){ lsSet("alerts", v); }
+
+function pushAlert(level, targetRole, subject, detail){
+  const alerts = getAlerts();
+  alerts.push({ id: uuid(), level, targetRole, subject, detail, created_at: new Date().toISOString() });
+  setAlerts(alerts);
+}
+
+/* =============================
+   ENTIDADES PJ / GESTORES / ANÁLISES
+   ============================= */
+function getEmpresas(){ return lsGet("empresas", []); }
+function setEmpresas(v){ lsSet("empresas", v); }
+
+function getLoansPJ(){ return lsGet("loans_pj", []); }
+function setLoansPJ(v){ lsSet("loans_pj", v); }
+
+function getGestores(){ return lsGet("gestores", []); }
+function setGestores(v){ lsSet("gestores", v); }
+
+function getAnalises(){ return lsGet("analysis_requests", []); }
+function setAnalises(v){ lsSet("analysis_requests", v); }
+
+/* =============================
+   AUDITORIA
+   ============================= */
+function logAction(operator_id, action_type, entity_type, entity_id, detail, value, whenISO){
+  const activities = lsGet("activity_logs", []);
+  activities.push({
+    id: uuid(),
+    operator_id,
+    action_type,
+    entity_type,
+    entity_id,
+    detail,
+    value: value ?? null,
+    created_at: whenISO || new Date().toISOString()
+  });
+  lsSet("activity_logs", activities);
+}
+
+/* =============================
+   DEMO SEED
+   ============================= */
+function seedDemoData(){
+  if(localStorage.getItem("demoSeeded") === "1") return;
+
+  const ops = [
+    {id:"op1", nome:"João Lima", login:"joao", senha:"123", area:"Centro", status:"ATIVO"},
+    {id:"op2", nome:"Maria Souza", login:"maria", senha:"123", area:"Centro", status:"ATIVO"},
+    {id:"op3", nome:"Carlos Silva", login:"carlos", senha:"123", area:"Centro", status:"INATIVO"},
+    {id:"op4", nome:"Ana Costa", login:"ana", senha:"123", area:"Centro", status:"ATIVO"},
+  ];
+
+  // políticas iniciais
+  const pol = {
+    op1:{maxLoan:5000, maxInstallments:24},
+    op2:{maxLoan:7000, maxInstallments:30},
+    op3:{maxLoan:3000, maxInstallments:12},
+    op4:{maxLoan:10000, maxInstallments:46},
+  };
+  setPolicies(pol);
+
+  // caixa inicial
+  setCashBalances({ central: 200000, operators: { op1:0, op2:0, op3:0, op4:0 } });
+  setCashLedger([]);
+
+  // Clientes
+  const clientNames = ["Bruno","Fernanda","Paulo","Rafaela","Tiago","Jéssica","Marcos","Larissa","Pedro","Camila","Lucas","Aline","Diego","Patrícia","Renato","Bianca","Eduardo","Vanessa","Gustavo","Sofia"];
+  const labels = ["BOM","REGULAR","DIFICIL"];
+  let clients = [];
+  let referrals = [];
+  let idx = 1;
+
+  ops.forEach(op=>{
+    for(let i=0;i<5;i++){
+      const id = "c" + (idx++);
+      const nome = clientNames[(idx*7) % clientNames.length] + " " + ["Oliveira","Santos","Pereira","Barbosa","Ferreira"][idx%5];
+      const status = (Math.random()<0.92) ? "ATIVO" : "INATIVO";
+      const score = labels[rand(0,2)];
+      const created_at = daysAgo(rand(1,35)).toISOString();
+      clients.push({id, nome, operator_id: op.id, area: op.area, status, score_label: score, created_at});
+    }
+  });
+
+  for(let i=0;i<8;i++){
+    const referrer = clients[rand(0, clients.length-1)];
+    const referred = clients[rand(0, clients.length-1)];
+    if(referrer.id !== referred.id){
+      referrals.push({
+        id: uuid(),
+        referrer_client_id: referrer.id,
+        referred_client_id: referred.id,
+        operator_id: referrer.operator_id,
+        created_at: daysAgo(rand(1,25)).toISOString()
+      });
+    }
+  }
+
+  let offers = [];
+  let loans = [];
+  let installments = [];
+  let collections = [];
+  let requestLogs = [];
+  let activities = [];
+
+  function logActionLocal(actorOpId, action_type, entity_type, entity_id, detail, value, whenISO){
+    activities.push({
+      id: uuid(),
+      operator_id: actorOpId,
+      action_type,
+      entity_type,
+      entity_id,
+      detail,
+      value: value ?? null,
+      created_at: whenISO || new Date().toISOString()
+    });
+  }
+
+  clients.forEach(c=>{
+    if(Math.random() < 0.55){
+      const offerId = "of-" + uuid();
+      const amount = rand(300, 2500);
+      const statuses = ["OFERECIDO","ACEITO","RECUSADO","EXPIRADO"];
+      const st = statuses[rand(0,3)];
+      const created_at = daysAgo(rand(1,30)).toISOString();
+      offers.push({id: offerId, client_id: c.id, operator_id: c.operator_id, amount, status: st, created_at});
+      logActionLocal(c.operator_id, "LOAN_OFFERED", "loan_offer", offerId, `Oferta para ${c.nome} (${st})`, amount, created_at);
+
+      if(st === "ACEITO" && Math.random() < 0.9){
+        const loanId = "l-" + uuid();
+        const disbursed_at = daysAgo(rand(1,25)).toISOString();
+        const loanStatus = (Math.random()<0.85) ? "ATIVO" : "QUITADO";
+        const principal = amount;
+        loans.push({id: loanId, client_id: c.id, operator_id: c.operator_id, principal, status: loanStatus, disbursed_at, created_at: disbursed_at});
+        logActionLocal(c.operator_id, "LOAN_DISBURSED", "loan", loanId, `Empréstimo liberado para ${c.nome}`, principal, disbursed_at);
+
+        // parcelas
+        const parts = 6;
+        let paidCount = rand(0,5);
+        for(let n=1;n<=parts;n++){
+          const due = new Date(disbursed_at);
+          due.setDate(due.getDate() + (n*7));
+          const amt = Math.round((principal/parts) * 100)/100;
+          const paid = (n<=paidCount) ? amt : (Math.random()<0.10 ? amt*0.5 : 0);
+          const paid_at = paid>0 ? new Date(due.getTime() - rand(0,3)*24*3600*1000).toISOString() : null;
+
+          let status;
+          const today = new Date();
+          if(paid >= amt) status = "PAGO";
+          else if(due < today) status = paid>0 ? "PARCIAL" : "VENCIDO";
+          else status = "PENDENTE";
+
+          const instId = "i-" + uuid();
+          installments.push({
+            id: instId,
+            loan_id: loanId,
+            number: n,
+            due_date: due.toISOString(),
+            amount_due: amt,
+            amount_paid: paid,
+            status,
+            paid_at
+          });
+
+          if(paid>0){
+            logActionLocal(c.operator_id, "PAYMENT_RECEIVED", "installment", instId, `Recebeu parcela ${n} de ${c.nome}`, paid, paid_at || due.toISOString());
+          }
+
+          if(status === "VENCIDO" || status === "PARCIAL"){
+            const attempts = rand(0,2);
+            for(let a=0;a<attempts;a++){
+              const when = new Date();
+              when.setDate(when.getDate() - rand(0,12));
+              when.setHours(rand(9,19), rand(0,59), 0, 0);
+
+              const results = ["SUCESSO","PARCIAL","PROMESSA","NAO_PAGOU","NAO_ENCONTRADO"];
+              const result = results[rand(0,4)];
+
+              let amount_collected = 0;
+              if(result === "SUCESSO") amount_collected = Math.max(0, amt - paid);
+              if(result === "PARCIAL") amount_collected = Math.max(0, (amt - paid) * 0.5);
+
+              const colId = "col-" + uuid();
+              collections.push({
+                id: colId,
+                operator_id: c.operator_id,
+                client_id: c.id,
+                installment_id: instId,
+                attempted_at: when.toISOString(),
+                result,
+                amount_collected,
+                notes: (result === "PROMESSA") ? "Cliente prometeu pagar até amanhã" : (result === "NAO_ENCONTRADO" ? "Sem contato" : "-")
+              });
+
+              logActionLocal(c.operator_id, "COLLECTION_DONE", "collection", colId, `Cobrança (${result}) - ${c.nome}`, amount_collected, when.toISOString());
+            }
+          }
+        }
+      }
+    }
+
+    logActionLocal(c.operator_id, "CLIENT_CREATED", "client", c.id, `Cadastrou cliente ${c.nome}`, null, c.created_at);
+    if(Math.random()<0.35){
+      const when = daysAgo(rand(1,18));
+      when.setHours(rand(9,18), rand(0,59), 0, 0);
+      logActionLocal(c.operator_id, "CLIENT_UPDATED", "client", c.id, `Atualizou dados de ${c.nome}`, null, when.toISOString());
+    }
+  });
+
+  // request logs
+  const paths = [
+    "/api/operador/clients",
+    "/api/operador/clients/:id",
+    "/api/operador/loan-offers",
+    "/api/operador/loans",
+    "/api/operador/collections",
+    "/api/operador/routes/start",
+    "/api/operador/routes/checkin",
+    "/api/operador/routes/checkout"
+  ];
+  const methods = ["GET","POST","PUT"];
+  ops.forEach(op=>{
+    const count = rand(25, 45);
+    for(let i=0;i<count;i++){
+      const when = daysAgo(rand(0,7));
+      when.setHours(rand(8,20), rand(0,59), 0, 0);
+      const status_code = (Math.random()<0.92) ? 200 : (Math.random()<0.5 ? 400 : 500);
+      requestLogs.push({
+        id: uuid(),
+        user_id: op.id,
+        method: methods[rand(0, methods.length-1)],
+        path: paths[rand(0, paths.length-1)],
+        status_code,
+        ip: "192.168.0." + rand(2, 200),
+        created_at: when.toISOString()
+      });
+    }
+  });
+
+  // empresas seed
+  const empresas = [
+    {id:"e1", cnpj:"12.345.678/0001-00", razao:"Alfa Comércio LTDA", endereco:"Rua A, 100 - Centro", dono:"João Oliveira", dividas:"SIM", funcionarios:18, docs:"Contrato social; certidões; balanço"},
+    {id:"e2", cnpj:"98.765.432/0001-11", razao:"Beta Serviços ME", endereco:"Av. B, 200 - Centro", dono:"Maria Santos", dividas:"NAO", funcionarios:6, docs:"Contrato social; comprovante endereço"},
+  ];
+  setEmpresas(empresas);
+
+  // loans pj seed
+  const loansPJ = [
+    {id:"lpj1", operator_id:"op4", empresa_id:"e1", principal: 15000, installments: 24, status:"ATIVO", disbursed_at: daysAgo(12).toISOString()},
+  ];
+  setLoansPJ(loansPJ);
+
+  // salva tudo
+  lsSet("operadores", ops);
+  lsSet("clientes", clients);
+  lsSet("loan_offers", offers);
+  lsSet("loans", loans);
+  lsSet("installments", installments);
+  lsSet("collections", collections);
+  lsSet("activity_logs", activities);
+  lsSet("referrals", referrals);
+  lsSet("request_logs", requestLogs);
+  setSessions(operatorSessionsDefault);
+
+  setGestores([
+    {id:"g1", nome:"Gestor Centro", login:"gestor_centro", senha:"123", area:"Centro", status:"ATIVO"}
+  ]);
+
+  setAnalises([]);
+  setAlerts([]);
+
+  localStorage.setItem("demoSeeded","1");
+}
+
+/* =============================
+   DATA
+   ============================= */
+function data(){
+  return {
+    user: getUser(),
+    ops: lsGet("operadores", []),
+    clients: lsGet("clientes", []),
+    offers: lsGet("loan_offers", []),
+    loans: lsGet("loans", []),
+    installments: lsGet("installments", []),
+    collections: lsGet("collections", []),
+    activities: lsGet("activity_logs", []),
+    referrals: lsGet("referrals", []),
+    requestLogs: lsGet("request_logs", []),
+    empresas: getEmpresas(),
+    loansPJ: getLoansPJ(),
+    gestores: getGestores(),
+    analises: getAnalises(),
+    alerts: getAlerts(),
+    sessions: getSessions(),
+    policies: getPolicies(),
+    cash: { balances: getCashBalances(), ledger: getCashLedger() }
+  };
+}
+
+/* =============================
+   UI ROLE
+   ============================= */
+function applyMenuVisibility(){
+  const u = getUser();
+  document.querySelectorAll('#menu a[data-role]').forEach(a=>{
+    const roles = a.getAttribute('data-role');
+    if(roles === "ALL") return a.classList.remove("hidden");
+    const allowed = roles.split(",").map(s=>s.trim()).includes(u.role);
+    if(!allowed) a.classList.add("hidden");
+    else a.classList.remove("hidden");
+  });
+}
+
+function setRoleUI(){
+  const u = getUser();
+  const roleText = (u.role === "MASTER") ? "Admin Master" : (u.role === "OPERADOR" ? "Operador Financeiro" : "Gestor Financeiro");
+  document.getElementById("role").textContent = roleText;
+  document.getElementById("name").textContent = u.name || roleText;
+  document.getElementById("areaText").textContent = "Área: " + (u.area || "-");
+  document.getElementById("sidebarSub").textContent = (u.role === "MASTER")
+    ? "Painel Master (todas as áreas)"
+    : (u.role === "OPERADOR"
+      ? "Painel do Operador (seus clientes)"
+      : "Painel do Gestor (visão completa da área)");
+
+  document.getElementById("pageSub").textContent = (u.role === "GESTOR")
+    ? "Acompanhe operadores, cobranças, clientes e empréstimos com data/horário e status."
+    : (u.role === "MASTER"
+      ? "Administre gestores/áreas e visualize tudo do sistema."
+      : "Acompanhe seus clientes, cobranças e empréstimos.");
+
+  const cfgNote = document.getElementById("cfgNote");
+  if(cfgNote){
+    cfgNote.innerHTML = `
+      <strong>Hierarquia:</strong><br>
+      MASTER cria <u>Gestores</u> • Gestor cria <u>Operadores</u> • Operador cadastra <u>Clientes</u>.<br><br>
+      <strong>Modo atual:</strong> <span class="badge muted">${roleText}</span>
+    `;
+  }
+
+  applyMenuVisibility();
+}
+
+function setActiveMenu(section){
+  document.querySelectorAll('#menu a[data-section]').forEach(a=>{
+    a.classList.toggle("active", a.dataset.section === section);
+  });
+}
+
+/* =============================
+   SEÇÕES
+   ============================= */
+let __sectionCurrent = "dashboard";
+let __sectionHistory = [];
+
+function openSection(id, opts){
+  opts = opts || {};
+  const push = opts.push !== false;
+
+  if(push && __sectionCurrent && __sectionCurrent !== id){
+    __sectionHistory.push(__sectionCurrent);
+  }
+  __sectionCurrent = id;
+
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+  const el = document.getElementById(id);
+  if(el) el.classList.add("active");
+
+  setActiveMenu(id);
+  closeSidebar();
+
+  const titles = {
+    dashboard: "Dashboard",
+    caixa: "Caixa",
+    operadores: "Operadores",
+    operadorDetalhe: "Operador (Detalhes)",
+    clientes: "Clientes",
+    emprestimos: "Empréstimos (PF)",
+    empresas: "Empresas (CNPJ)",
+    emprestimosPJ: "Empréstimos (PJ)",
+    cobrancas: "Cobranças",
+    inadimplentes: "Pendências / Atrasos",
+    auditoria: "Auditoria",
+    rotas: "Rotas (por dia)",
+    alertas: "Alertas",
+    gestores: "Gestores Financeiros",
+    analises: "Análises de Clientes",
+    indicacoes: "Indicações",
+    relatorios: "Relatórios",
+    config: "Configurações",
+  };
+  document.getElementById("pageTitle").textContent = titles[id] || "Dashboard";
+
+  const backBtn = document.getElementById("backBtn");
+  if(backBtn){
+    let show = (id !== "dashboard");
+    // Se esta página é "standalone" (arquivo separado), não mostrar "Voltar" no primeiro carregamento
+    if(document.body.dataset.standalone === "1" && __sectionHistory.length === 0){
+      show = false;
+    }
+    backBtn.style.display = show ? "inline-flex" : "none";
+    backBtn.classList.toggle("pulse", show);
+  }
+  // Clientes: Operador cai direto no cadastro
+  if(id === "clientes"){
+    const u = getUser();
+    if(u.role === "OPERADOR") switchClientesTab('cadastro');
+    else switchClientesTab('lista');
+  }
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function goBack(){
+  const prev = __sectionHistory.pop() || "dashboard";
+  openSection(prev, {push:false});
+}
+
+
+/* THEME */
+function toggleTheme(){
+  document.body.classList.toggle("light");
+  localStorage.setItem("theme",document.body.classList.contains("light")?"light":"dark");
+  document.getElementById("themeIcon").textContent =
+    document.body.classList.contains("light") ? "🌞" : "🌙";
+}
+if(localStorage.getItem("theme")==="light"){
+  document.body.classList.add("light");
+  document.getElementById("themeIcon").textContent="🌞";
+}
+
+function sairDoSite(){
+  localStorage.removeItem("currentUser");
+  localStorage.removeItem("usuarioLogado");
+  window.location.href = "login.html";
+}
+
+
+function openSupportWhatsApp(){
+  const cfg = lsGet("app_config", {});
+  let phone = (cfg.support_whatsapp || "").replace(/\D/g, "");
+  const msg = encodeURIComponent(cfg.support_message || "Olá! Preciso de suporte no SistemaFin.");
+
+  if(!phone){
+    const entered = prompt("Informe o WhatsApp do suporte (DDI+DDD+Número). Ex: 5511999999999");
+    if(entered){
+      phone = String(entered).replace(/\D/g, "");
+      cfg.support_whatsapp = phone;
+      lsSet("app_config", cfg);
+    }
+  }
+
+  const url = phone ? `https://wa.me/${phone}?text=${msg}` : `https://wa.me/?text=${msg}`;
+  window.open(url, "_blank", "noopener");
+}
+
+
+/* =============================
+   PRINT (abre janela só do elemento)
+   ============================= */
+function printElement(elId, title){
+  const el = document.getElementById(elId);
+  if(!el){ alert("Elemento para impressão não encontrado."); return; }
+  const w = window.open("", "_blank", "width=900,height=700");
+  w.document.write(`
+    <html><head><title>${title}</title>
+    <style>
+      body{font-family:Inter,Arial,sans-serif;padding:20px;color:#111;}
+      h1{font-size:18px;margin:0 0 14px;}
+      table{width:100%;border-collapse:collapse;font-size:12px;}
+      th,td{border:1px solid #ddd;padding:8px;vertical-align:top;}
+      th{background:#f3f4f6;text-transform:uppercase;font-size:11px;letter-spacing:.5px;}
+      .badge{font-weight:700;}
+    </style>
+    </head><body>
+      <h1>${title}</h1>
+      ${el.innerHTML}
+    </body></html>
+  `);
+  w.document.close();
+  w.focus();
+  w.print();
+  w.close();
+}
+
+/* =============================
+   SELECTS
+   ============================= */
+function fillOperatorSelect(selectEl, includeAll){
+  const {ops} = data();
+  if(!selectEl) return;
+  selectEl.innerHTML = "";
+  if(includeAll){
+    const opt = document.createElement("option");
+    opt.value = "TODOS";
+    opt.textContent = "TODOS";
+    selectEl.appendChild(opt);
+  }
+  ops.forEach(o=>{
+    const opt = document.createElement("option");
+    opt.value = o.id;
+    opt.textContent = `${o.nome} (${o.status})`;
+    selectEl.appendChild(opt);
+  });
+}
+function fillEmpresaSelect(selectEl, includeAll){
+  const {empresas} = data();
+  if(!selectEl) return;
+  selectEl.innerHTML = "";
+  if(includeAll){
+    const opt = document.createElement("option");
+    opt.value = "TODOS";
+    opt.textContent = "TODAS";
+    selectEl.appendChild(opt);
+  }
+  empresas.forEach(e=>{
+    const opt = document.createElement("option");
+    opt.value = e.id;
+    opt.textContent = `${e.razao} (${e.cnpj})`;
+    selectEl.appendChild(opt);
+  });
+}
+
+/* =============================
+   FILTERS (Dashboard)
+   ============================= */
+let currentFilters = { from:null, to:null, operator_id:"TODOS" };
+
+function initDashboardFilters(){
+  const from = document.getElementById("fFrom");
+  const to = document.getElementById("fTo");
+  const op = document.getElementById("fOperator");
+
+  const d = new Date();
+  const fromDefault = new Date(); fromDefault.setDate(d.getDate()-6);
+
+  from.value = toISODate(fromDefault);
+  to.value = toISODate(d);
+
+  currentFilters.from = from.value;
+  currentFilters.to = to.value;
+
+  fillOperatorSelect(op, true);
+  op.value = "TODOS";
+}
+
+function applyFilters(){
+  const from = document.getElementById("fFrom").value;
+  const to = document.getElementById("fTo").value;
+  const operator_id = document.getElementById("fOperator").value;
+  currentFilters = {from, to, operator_id};
+  renderDashboard();
+  renderOperadores();
+  renderRelatorios();
+}
+
+function resetFilters(){
+  initDashboardFilters();
+  renderDashboard();
+  renderOperadores();
+  renderRelatorios();
+}
+
+/* =============================
+   KPIs
+   ============================= */
+function computeMetrics({from, to, operator_id}){
+  const {ops, clients, loans, offers, installments, collections, referrals} = data();
+  const opFilter = (arr, key) => operator_id==="TODOS" ? arr : arr.filter(x => x[key] === operator_id);
+
+  const clientsF = opFilter(clients, "operator_id");
+  const offersF = opFilter(offers, "operator_id").filter(x => inRange(x.created_at, from, to));
+  const loansF = opFilter(loans, "operator_id").filter(x => inRange(x.disbursed_at, from, to));
+  const collectionsF = opFilter(collections, "operator_id").filter(x => inRange(x.attempted_at, from, to));
+  const referralsF = opFilter(referrals, "operator_id").filter(x => inRange(x.created_at, from, to));
+
+  const loanIds = opFilter(loans, "operator_id").map(l => l.id);
+  const instF = installments.filter(i => loanIds.includes(i.loan_id));
+
+  const overdue = instF.filter(i => i.status==="VENCIDO" || i.status==="PARCIAL");
+  const pendingToday = instF.filter(i => {
+    const due = new Date(i.due_date);
+    const today = new Date();
+    return due <= today && (i.amount_paid||0) < (i.amount_due||0) && (i.status==="PENDENTE" || i.status==="VENCIDO" || i.status==="PARCIAL");
+  });
+
+  const received = collectionsF.reduce((s,c)=> s + (c.amount_collected||0), 0);
+
+  const balances = getCashBalances();
+  const caixaCentral = (balances && balances.central) ? balances.central : 0;
+  const caixaOperadoresTotal = Object.values((balances && balances.operators) || {}).reduce((s,v)=> s + (v||0), 0);
+
+  const loansAll = opFilter(loans, "operator_id");
+  const emprestadoTotal = loansAll.reduce((s,l)=> s + (l.principal||0), 0);
+
+  const aReceberTotal = instF.reduce((s,i)=> s + Math.max(0, (i.amount_due||0) - (i.amount_paid||0)), 0);
+
+
+  const good = clientsF.filter(c => c.score_label==="BOM").length;
+  const hard = clientsF.filter(c => c.score_label==="DIFICIL").length;
+
+  const distinctReferrers = new Set(referralsF.map(r => r.referrer_client_id)).size;
+  const cobrancasFaltam = pendingToday.length;
+  const opsAtivos = ops.filter(o => o.status==="ATIVO").length;
+
+  return {
+    dinheiroEmCaixa: caixaCentral,
+    dinheiroEmCaixaOperadores: caixaOperadoresTotal,
+    dinheiroEmprestadoTotal: emprestadoTotal,
+    dinheiroAReceberTotal: aReceberTotal,
+    caixaTotal: 185200 + received,
+    opsAtivos,
+    clientesTotal: clientsF.length,
+    ofertas: offersF.length,
+    emprestimosFeitos: loansF.length,
+    cobrancasFeitas: collectionsF.length,
+    cobrancasFaltam,
+    recebido: received,
+    vencidos: overdue.length,
+    indicacoes: referralsF.length,
+    clientesIndicadores: distinctReferrers,
+    bonsPagadores: good,
+    dificeisPagadores: hard
+  };
+}
+
+/* =============================
+   RENDER DASHBOARD
+   ============================= */
+function badgeForResult(r){
+  if(r==="SUCESSO") return `<span class="badge success">SUCESSO</span>`;
+  if(r==="PARCIAL") return `<span class="badge warning">PARCIAL</span>`;
+  if(r==="PROMESSA") return `<span class="badge muted">PROMESSA</span>`;
+  if(r==="NAO_PAGOU") return `<span class="badge danger">NÃO PAGOU</span>`;
+  if(r==="NAO_ENCONTRADO") return `<span class="badge muted">NÃO ENCONTRADO</span>`;
+  return `<span class="badge muted">${r}</span>`;
+}
+
+function renderDashboard(){
+  const {activities, collections, ops, clients} = data();
+  const {from, to, operator_id} = currentFilters;
+
+  document.getElementById("rangeLabel").textContent = `Período: ${from.split("-").reverse().join("/")} → ${to.split("-").reverse().join("/")}`;
+
+  const m = computeMetrics(currentFilters);
+  const cards = [
+    {title:"Dinheiro em Caixa", value: fmtMoney(m.dinheiroEmCaixa), sub:"saldo central (demo)", icon:"🏦", section:"caixa"},
+    {title:"Caixa dos Operadores (Total)", value: fmtMoney(m.dinheiroEmCaixaOperadores), sub:"saldo distribuído (demo)", icon:"👛", section:"operadores"},
+    {title:"Dinheiro Emprestado (Total)", value: fmtMoney(m.dinheiroEmprestadoTotal), sub:"principal liberado (demo)", icon:"💰", section:"emprestimos"},
+    {title:"Dinheiro a Receber (Total)", value: fmtMoney(m.dinheiroAReceberTotal), sub:"parcelas em aberto (demo)", icon:"📥", section:"cobrancas"},
+    {title:"Caixa Total", value: fmtMoney(m.caixaTotal), sub:"(demo) base + recebidos do período", icon:"💸", section:"caixa"},
+    {title:"Operadores Ativos", value: m.opsAtivos, sub:"na área", icon:"🧑‍💼", section:"operadores"},
+    {title:"Clientes", value: m.clientesTotal, sub:`Bons: ${m.bonsPagadores} • Difíceis: ${m.dificeisPagadores}`, icon:"👥", section:"clientes"},
+    {title:"Empréstimos Oferecidos", value: m.ofertas, sub:"no período", icon:"🟦", section:"emprestimos"},
+    {title:"Empréstimos Feitos", value: m.emprestimosFeitos, sub:"no período", icon:"💰", section:"emprestimos"},
+    {title:"Cobranças Feitas", value: m.cobrancasFeitas, sub:`Faltam: ${m.cobrancasFaltam}`, icon:"🧾", section:"cobrancas"},
+    {title:"Recebido", value: fmtMoney(m.recebido), sub:"(somatório do período)", icon:"✅", section:"cobrancas"},
+    {title:"Vencidos / Pendências", value: m.vencidos, sub:"parcelas vencidas/parciais", icon:"⚠️", section:"inadimplentes"},
+    {title:"Indicações", value: m.indicacoes, sub:`Clientes indicando: ${m.clientesIndicadores}`, icon:"🤝", section:"indicacoes"},
+  ];
+
+  const kpiEl = document.getElementById("kpiCards");
+  kpiEl.innerHTML = "";
+  cards.forEach(c=>{
+    const div = document.createElement("div");
+    div.className = "card";
+    div.onclick = () => openSection(c.section);
+    div.innerHTML = `<h3>${c.icon} ${c.title}</h3><p>${c.value}</p><small>${c.sub}</small>`;
+    kpiEl.appendChild(div);
+  });
+
+  const lastActions = activities
+    .filter(a => inRange(a.created_at, from, to))
+    .filter(a => operator_id==="TODOS" ? true : a.operator_id===operator_id)
+    .sort((a,b)=> new Date(b.created_at)-new Date(a.created_at))
+    .slice(0,8);
+
+  const tblA = document.getElementById("tblLastActions");
+  tblA.innerHTML = "";
+  lastActions.forEach(a=>{
+    const op = ops.find(o=>o.id===a.operator_id);
+    tblA.innerHTML += `
+      <tr>
+        <td>${toLocalDateTime(a.created_at)}</td>
+        <td>${op ? op.nome : "—"}</td>
+        <td><span class="badge muted">${a.action_type}</span></td>
+        <td>${a.detail || "-"}</td>
+        <td>${a.value ? fmtMoney(a.value) : "-"}</td>
+      </tr>
+    `;
+  });
+
+  const lastCols = collections
+    .filter(c => inRange(c.attempted_at, from, to))
+    .filter(c => operator_id==="TODOS" ? true : c.operator_id===operator_id)
+    .sort((a,b)=> new Date(b.attempted_at)-new Date(a.attempted_at))
+    .slice(0,8);
+
+  const tblC = document.getElementById("tblLastCollections");
+  tblC.innerHTML = "";
+  lastCols.forEach(c=>{
+    const op = ops.find(o=>o.id===c.operator_id);
+    const cl = clients.find(x=>x.id===c.client_id);
+    tblC.innerHTML += `
+      <tr>
+        <td>${toLocalDateTime(c.attempted_at)}</td>
+        <td>${op ? op.nome : "—"}</td>
+        <td>${cl ? cl.nome : "—"}</td>
+        <td>${badgeForResult(c.result)}</td>
+        <td>${fmtMoney(c.amount_collected||0)}</td>
+      </tr>
+    `;
+  });
+
+  // Atualiza também alertas
+  renderAlertas();
+}
+
+/* =============================
+   OPERADORES
+   ============================= */
+let selectedOperatorId = null;
+
+function abrirFormOperador(){
+  const u = getUser();
+  if(!(u.role==="GESTOR" || u.role==="MASTER")){
+    alert("Somente Gestor/Master pode criar operadores (demo).");
+    return;
+  }
+  const form = document.getElementById("formOperador");
+  form.style.display = (form.style.display === "grid") ? "none" : "grid";
+}
+function cancelarOperador(){ document.getElementById("formOperador").style.display = "none"; }
+
+function salvarOperador(){
+  const u = getUser();
+  if(!(u.role==="GESTOR" || u.role==="MASTER")){
+    alert("Somente Gestor/Master pode criar operadores (demo).");
+    return;
+  }
+
+  const nome = document.getElementById("opNome").value.trim();
+  const login = document.getElementById("opLogin").value.trim();
+  const senha = document.getElementById("opSenha").value.trim();
+  const area = document.getElementById("opArea").value.trim();
+  const status = document.getElementById("opStatus").value;
+  const maxLoan = Number(document.getElementById("opMaxLoan").value || 0);
+  const maxInstall = Math.min(46, Math.max(1, Number(document.getElementById("opMaxInstall").value || 1)));
+
+  if(!nome || !login || !senha || !area){
+    alert("Preencha todos os campos.");
+    return;
+  }
+
+  const ops = lsGet("operadores", []);
+  const id = "op-" + uuid();
+  ops.push({id, nome, login, senha, area, status});
+  lsSet("operadores", ops);
+
+  const policies = getPolicies();
+  policies[id] = { maxLoan: maxLoan || 3000, maxInstallments: maxInstall || 12 };
+  setPolicies(policies);
+
+  const balances = getCashBalances();
+  balances.operators[id] = 0;
+  setCashBalances(balances);
+
+  // cria sessão default offline
+  const sessions = getSessions();
+  sessions.push({ operator_id:id, online:false, device:"-", ip:"-", last_seen:"—" });
+  setSessions(sessions);
+
+  logAction(id, "OPERATOR_CREATED", "operator", id, `Operador criado: ${nome}`, null, new Date().toISOString());
+
+  ["opNome","opLogin","opSenha","opArea","opMaxLoan","opMaxInstall"].forEach(k=> document.getElementById(k).value = "");
+  document.getElementById("opStatus").value = "ATIVO";
+
+  cancelarOperador();
+  refreshAllOperatorSelects();
+  renderOperadores();
+  alert("Operador criado (demo).");
+}
+
+function renderOperadores(){
+  const {ops, clients, collections, sessions, policies} = data();
+  const tbody = document.getElementById("listaOperadores");
+  if(!tbody) return;
+
+  const st = document.getElementById("opFilterStatus").value;
+  const q = document.getElementById("opSearch").value.trim().toLowerCase();
+  tbody.innerHTML = "";
+
+  const {from, to} = currentFilters;
+
+  ops
+    .filter(o => st === "TODOS" ? true : o.status === st)
+    .filter(o => !q ? true : o.nome.toLowerCase().includes(q) || o.login.toLowerCase().includes(q))
+    .forEach(op => {
+      const sess = sessions.find(s => s.operator_id === op.id);
+      const onlineBadge = sess?.online
+        ? `<span class="badge success">🟢 ONLINE</span>`
+        : `<span class="badge danger">🔴 OFFLINE</span>`;
+      const device = sess?.device || "-";
+      const ip = sess?.ip || "-";
+      const lastSeen = sess?.last_seen || "";
+
+      const opClients = clients.filter(c => c.operator_id === op.id);
+      const colsPeriod = collections.filter(
+        c => c.operator_id === op.id && inRange(c.attempted_at, from, to)
+      );
+      const receivedPeriod = colsPeriod.reduce((s, c) => s + (c.amount_collected || 0), 0);
+
+      const badgeStatus = op.status === "ATIVO"
+        ? `<span class="badge success">ATIVO</span>`
+        : `<span class="badge muted">INATIVO</span>`;
+
+      const pol = policies[op.id] || {maxLoan:0, maxInstallments:0};
+
+      tbody.innerHTML += `
+        <tr>
+          <td>
+            <strong>${op.nome}</strong><br>
+            <small style="color:var(--muted)">@${op.login}</small>
+          </td>
+          <td>${badgeStatus}</td>
+          <td>${onlineBadge}<br><small>${lastSeen}</small></td>
+          <td>${device}</td>
+          <td>${ip}</td>
+          <td>${opClients.length}</td>
+          <td>${colsPeriod.length}</td>
+          <td>${fmtMoney(receivedPeriod)}</td>
+          <td>${fmtMoney(pol.maxLoan||0)}</td>
+          <td>${pol.maxInstallments || 0}</td>
+          <td>
+            <button class="btn primary" onclick="openOperatorDetail('${op.id}')">Detalhes</button>
+          </td>
+        </tr>
+      `;
+    });
+}
+
+function openOperatorDetail(opId){
+  selectedOperatorId = opId;
+  const {ops} = data();
+  const op = ops.find(o=>o.id===opId);
+  document.getElementById("opDetailTitle").innerHTML = `Detalhes do Operador: <strong>${op ? op.nome : opId}</strong>`;
+  document.getElementById("opFrom").value = currentFilters.from;
+  document.getElementById("opTo").value = currentFilters.to;
+  renderOperadorDetalhe();
+  openSection("operadorDetalhe");
+}
+
+function renderOperadorDetalhe(){
+  const {ops, clients, loans, installments, collections, activities} = data();
+  const opId = selectedOperatorId;
+  if(!opId) return;
+
+  const from = document.getElementById("opFrom").value;
+  const to = document.getElementById("opTo").value;
+
+  const op = ops.find(o=>o.id===opId);
+  const opClients = clients.filter(c=>c.operator_id===opId);
+
+  const opLoans = loans.filter(l=>l.operator_id===opId);
+  const loanIds = opLoans.map(l=>l.id);
+  const opInst = installments.filter(i=>loanIds.includes(i.loan_id));
+  const vencidos = opInst.filter(i => i.status==="VENCIDO" || i.status==="PARCIAL");
+  const emAberto = opInst.reduce((s,i)=> s + Math.max(0,(i.amount_due||0)-(i.amount_paid||0)),0);
+
+  const colsPeriod = collections.filter(c => c.operator_id===opId && inRange(c.attempted_at, from, to));
+  const received = colsPeriod.reduce((s,c)=>s+(c.amount_collected||0),0);
+  const actsPeriod = activities.filter(a => a.operator_id===opId && inRange(a.created_at, from, to));
+
+  const good = opClients.filter(c=>c.score_label==="BOM").length;
+  const hard = opClients.filter(c=>c.score_label==="DIFICIL").length;
+
+  const cards = [
+    {title:"Status", value: op ? op.status : "-", sub:"", icon:"🧑‍💼"},
+    {title:"Clientes", value: opClients.length, sub:`Bons: ${good} • Difíceis: ${hard}`, icon:"👥"},
+    {title:"Ações (período)", value: actsPeriod.length, sub:"auditoria do operador", icon:"🧩"},
+    {title:"Cobranças (período)", value: colsPeriod.length, sub:`Recebido: ${fmtMoney(received)}`, icon:"🧾"},
+    {title:"Parcelas vencidas", value: vencidos.length, sub:"vencido/parcial", icon:"⚠️"},
+    {title:"Em aberto", value: fmtMoney(emAberto), sub:"somatório parcelas", icon:"💰"},
+  ];
+
+  const el = document.getElementById("opDetailCards");
+  el.innerHTML = "";
+  cards.forEach(c=>{
+    const div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = `<h3>${c.icon} ${c.title}</h3><p>${c.value}</p><small>${c.sub}</small>`;
+    el.appendChild(div);
+  });
+
+  const tblA = document.getElementById("opDetailActions");
+  tblA.innerHTML = "";
+  actsPeriod.sort((a,b)=> new Date(b.created_at)-new Date(a.created_at)).slice(0,30).forEach(a=>{
+    tblA.innerHTML += `
+      <tr>
+        <td>${toLocalDateTime(a.created_at)}</td>
+        <td><span class="badge muted">${a.action_type}</span></td>
+        <td>${a.entity_type} • ${a.entity_id}</td>
+        <td>${a.detail || "-"}</td>
+        <td>${a.value ? fmtMoney(a.value) : "-"}</td>
+      </tr>
+    `;
+  });
+
+  const tblC = document.getElementById("opDetailCollections");
+  tblC.innerHTML = "";
+  colsPeriod.sort((a,b)=> new Date(b.attempted_at)-new Date(a.attempted_at)).slice(0,30).forEach(c=>{
+    const cl = clients.find(x=>x.id===c.client_id);
+    tblC.innerHTML += `
+      <tr>
+        <td>${toLocalDateTime(c.attempted_at)}</td>
+        <td>${cl ? cl.nome : "—"}</td>
+        <td>${badgeForResult(c.result)}</td>
+        <td>${fmtMoney(c.amount_collected||0)}</td>
+        <td style="color:var(--muted)">${c.notes || "-"}</td>
+      </tr>
+    `;
+  });
+
+  const tblL = document.getElementById("opDetailLoans");
+  tblL.innerHTML = "";
+  opLoans.slice(0,30).forEach(l=>{
+    const cl = clients.find(x=>x.id===l.client_id);
+    const inst = installments.filter(i=>i.loan_id===l.id);
+    const paid = inst.filter(i=>i.status==="PAGO").length;
+    const total = inst.length;
+    const venc = inst.filter(i=>i.status==="VENCIDO" || i.status==="PARCIAL").length;
+    const open = inst.reduce((s,i)=> s + Math.max(0,(i.amount_due||0)-(i.amount_paid||0)),0);
+
+    const stBadge = l.status==="ATIVO" ? `<span class="badge success">ATIVO</span>` :
+      (l.status==="QUITADO" ? `<span class="badge muted">QUITADO</span>` : `<span class="badge warning">${l.status}</span>`);
+
+    tblL.innerHTML += `
+      <tr>
+        <td>${cl ? cl.nome : "—"}</td>
+        <td>${fmtMoney(l.principal)}</td>
+        <td>${stBadge}</td>
+        <td>${paid}/${total}</td>
+        <td>${venc}</td>
+        <td>${fmtMoney(open)}</td>
+      </tr>
+    `;
+  });
+}
+
+/* =============================
+   POLÍTICAS
+   ============================= */
+function savePolicies(){
+  const u = getUser();
+  if(!(u.role==="GESTOR" || u.role==="MASTER")){
+    alert("Somente Gestor/Master pode alterar políticas.");
+    return;
+  }
+  const opId = document.getElementById("polOperator").value;
+  const maxLoan = Number(document.getElementById("polMaxLoan").value || 0);
+  const maxInstallments = Math.min(46, Math.max(1, Number(document.getElementById("polMaxInstall").value || 1)));
+
+  const pol = getPolicies();
+  pol[opId] = { maxLoan, maxInstallments };
+  setPolicies(pol);
+
+  logAction(opId, "POLICY_UPDATED", "policy", opId, `Política atualizada por ${u.role}`, maxLoan, new Date().toISOString());
+  pushAlert("warning", "GESTOR", "Política atualizada", `Operador ${opId} agora: limite ${fmtMoney(maxLoan)} e parcelas máx ${maxInstallments}.`);
+
+  renderOperadores();
+  document.getElementById("polNote").innerHTML = `✅ Salvo: limite ${fmtMoney(maxLoan)} • parcelas máx ${maxInstallments}.`;
+}
+
+/* =============================
+   CAIXA
+   ============================= */
+function renderCaixa(){
+  const u = getUser();
+  const {cash, ops} = data();
+  const central = cash.balances.central || 0;
+
+  // cards central
+  const cards = [
+    {title:"Saldo Central", value: fmtMoney(central), sub:"controlado por Gestor/Master", icon:"🏦"},
+    {title:"Operadores com saldo", value: Object.values(cash.balances.operators||{}).filter(v=>v>0).length, sub:"operadores com caixa > 0", icon:"🧾"},
+  ];
+  const el = document.getElementById("cashCentralCards");
+  el.innerHTML = "";
+  cards.forEach(c=>{
+    const div = document.createElement("div");
+    div.className = "card";
+    div.style.cursor = "default";
+    div.onclick = null;
+    div.innerHTML = `<h3>${c.icon} ${c.title}</h3><p>${c.value}</p><small>${c.sub}</small>`;
+    el.appendChild(div);
+  });
+
+  // role note
+  const note = document.getElementById("cashRoleNote");
+  if(u.role==="OPERADOR"){
+    note.innerHTML = `Você está como <strong>Operador</strong>. Em produção, aqui você veria seu saldo operacional e prestações de contas.`;
+  }else{
+    note.innerHTML = `Você está como <strong>${u.role}</strong>. Você pode <u>liberar caixa</u> para operadores.`;
+  }
+
+  // select operadores
+  fillOperatorSelect(document.getElementById("cashToOperator"), false);
+
+  // ledger
+  const ledger = cash.ledger.slice().sort((a,b)=> new Date(b.created_at)-new Date(a.created_at)).slice(0,20);
+  const tbody = document.getElementById("tblCashLedger");
+  tbody.innerHTML = "";
+  ledger.forEach(x=>{
+    tbody.innerHTML += `
+      <tr>
+        <td>${toLocalDateTime(x.created_at)}</td>
+        <td><span class="badge muted">${x.type}</span></td>
+        <td>${x.from}</td>
+        <td>${x.to}</td>
+        <td>${fmtMoney(x.amount)}</td>
+      </tr>
+    `;
+  });
+}
+
+function cashReleaseToOperator(){
+  const u = getUser();
+  if(!(u.role==="GESTOR" || u.role==="MASTER")){
+    alert("Somente Gestor/Master pode liberar caixa.");
+    return;
+  }
+  const opId = document.getElementById("cashToOperator").value;
+  const amount = Number(document.getElementById("cashAmount").value || 0);
+  if(!opId || amount<=0){ alert("Selecione operador e informe valor > 0."); return; }
+
+  const balances = getCashBalances();
+  if((balances.central||0) < amount){
+    alert("Saldo central insuficiente.");
+    return;
+  }
+
+  balances.central -= amount;
+  balances.operators[opId] = (balances.operators[opId]||0) + amount;
+  setCashBalances(balances);
+
+  const ledger = getCashLedger();
+  ledger.push({ id: uuid(), type:"CASH_RELEASED", from:"CENTRAL", to:opId, amount, created_at: new Date().toISOString() });
+  setCashLedger(ledger);
+
+  logAction(opId, "CASH_RELEASED", "cash", opId, `Caixa liberado por ${u.role}`, amount, new Date().toISOString());
+  pushAlert("success", "OPERADOR", "Caixa liberado", `Você recebeu ${fmtMoney(amount)} de caixa operacional.`);
+
+  document.getElementById("cashAmount").value = "";
+  renderCaixa();
+}
+
+/* =============================
+   CLIENTES
+   ============================= */
+function renderClientes(){
+  const {ops, clients, loans, installments, referrals} = data();
+  const tbody = document.getElementById("tblClientes");
+  if(!tbody) return;
+
+  const opId = document.getElementById("cOperator").value;
+  const status = document.getElementById("cStatus").value;
+  const score = document.getElementById("cScore").value;
+  const q = document.getElementById("cSearch").value.trim().toLowerCase();
+
+  tbody.innerHTML = "";
+
+  clients
+    .filter(c => opId==="TODOS" ? true : c.operator_id===opId)
+    .filter(c => status==="TODOS" ? true : c.status===status)
+    .filter(c => score==="TODOS" ? true : c.score_label===score)
+    .filter(c => !q ? true : c.nome.toLowerCase().includes(q))
+    .forEach(c=>{
+      const op = ops.find(o=>o.id===c.operator_id);
+      const clientLoans = loans.filter(l=>l.client_id===c.id);
+      const loanIds = clientLoans.map(l=>l.id);
+      const inst = installments.filter(i=>loanIds.includes(i.loan_id));
+      const vencidos = inst.filter(i => i.status==="VENCIDO" || i.status==="PARCIAL").length;
+
+      const indicacoes = referrals.filter(r => r.referrer_client_id === c.id).length;
+
+      const pendBadge = vencidos > 0
+        ? `<span class="badge danger">⚠ ${vencidos} vencida(s)</span>`
+        : `<span class="badge success">✓ ok</span>`;
+
+      const scoreBadge = c.score_label==="BOM"
+        ? `<span class="badge success">BOM</span>`
+        : (c.score_label==="DIFICIL" ? `<span class="badge danger">DIFÍCIL</span>` : `<span class="badge warning">REGULAR</span>`);
+
+      const statusBadge = c.status==="ATIVO"
+        ? `<span class="badge success">ATIVO</span>`
+        : `<span class="badge muted">INATIVO</span>`;
+
+      tbody.innerHTML += `
+        <tr>
+          <td><strong>${c.nome}</strong><br><span style="color:var(--muted);font-size:12px">Desde ${toISODate(c.created_at).split("-").reverse().join("/")}</span></td>
+          <td>${op ? op.nome : "—"}</td>
+          <td>${statusBadge}</td>
+          <td>${pendBadge}</td>
+          <td>${scoreBadge}</td>
+          <td>${clientLoans.length}</td>
+          <td>${vencidos}</td>
+          <td>${indicacoes}</td>
+        </tr>
+      `;
+    });
+}
+
+
+/* ===== CADASTRO DE CLIENTE (Operador) ===== */
+function switchClientesTab(tab){
+  const btnLista = document.getElementById("tabClientesLista");
+  const btnCad = document.getElementById("tabClientesCadastro");
+  const panelLista = document.getElementById("clientesTabLista");
+  const panelCad = document.getElementById("clientesTabCadastro");
+  if(!btnLista || !btnCad || !panelLista || !panelCad) return;
+
+  const isCadastro = (tab === "cadastro");
+  btnLista.classList.toggle("active", !isCadastro);
+  btnCad.classList.toggle("active", isCadastro);
+  btnLista.setAttribute("aria-selected", String(!isCadastro));
+  btnCad.setAttribute("aria-selected", String(isCadastro));
+
+  panelLista.style.display = isCadastro ? "none" : "block";
+  panelCad.style.display = isCadastro ? "block" : "none";
+
+  if(isCadastro){
+    initNovoClienteForm();
+  }else{
+    renderClientes();
+  }
+}
+
+function initNovoClienteForm(){
+  const sel = document.getElementById("ncOperator");
+  if(!sel) return;
+
+  fillOperatorSelect(sel, false);
+
+  const u = getUser();
+  if(u.role === "OPERADOR"){
+    // tenta fixar um operador pela área (demo)
+    const {ops} = data();
+    const byArea = ops.find(o => o.area === u.area && o.status === "ATIVO");
+    sel.value = (byArea ? byArea.id : (ops[0]?.id || ""));
+    sel.disabled = true;
+  }else{
+    sel.disabled = false;
+  }
+}
+
+function maskCPF(input){
+  let v = (input.value || "").replace(/\D/g,'').slice(0,11);
+  v = v.replace(/(\d{3})(\d)/,'$1.$2');
+  v = v.replace(/(\d{3})(\d)/,'$1.$2');
+  v = v.replace(/(\d{3})(\d{1,2})$/,'$1-$2');
+  input.value = v;
+}
+
+function maskCEP(input){
+  let v = (input.value || "").replace(/\D/g,'').slice(0,8);
+  if(v.length > 5) v = v.slice(0,5) + "-" + v.slice(5);
+  input.value = v;
+}
+
+function maskMoneyBR(input){
+  // mantém só dígitos e formata como BRL (centavos)
+  let v = (input.value || "").replace(/\D/g,'');
+  if(!v) { input.value = ""; return; }
+  v = v.slice(0, 12); // limite
+  const n = Number(v) / 100;
+  input.value = n.toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
+}
+
+function parseMoneyBR(str){
+  // "R$ 1.234,56" -> 1234.56
+  const clean = (str || "").replace(/[^\d,]/g,'').replace(/\./g,'').replace(',', '.');
+  const n = Number(clean);
+  return isNaN(n) ? 0 : n;
+}
+
+function fileMeta(f){
+  if(!f) return null;
+  return { name: f.name, type: f.type, size: f.size, lastModified: f.lastModified };
+}
+
+async function lookupCEP(){
+  const cepEl = document.getElementById("ncCep");
+  const statusEl = document.getElementById("cepStatus");
+  const cep = (cepEl?.value || "").replace(/\D/g,'');
+  if(!cepEl) return;
+
+  if(statusEl) statusEl.textContent = "";
+  if(cep.length !== 8){
+    if(statusEl) statusEl.textContent = "CEP incompleto.";
+    return;
+  }
+
+  try{
+    if(statusEl) statusEl.textContent = "Buscando endereço...";
+    const r = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+    const j = await r.json();
+
+    if(j.erro){
+      if(statusEl) statusEl.textContent = "CEP não encontrado.";
+      return;
+    }
+
+    document.getElementById("ncLogradouro").value = j.logradouro || "";
+    document.getElementById("ncBairro").value = j.bairro || "";
+    document.getElementById("ncCidade").value = j.localidade || "";
+    document.getElementById("ncUf").value = (j.uf || "").toUpperCase();
+
+    if(statusEl) statusEl.textContent = "Endereço preenchido pelo CEP.";
+  }catch(e){
+    if(statusEl) statusEl.textContent = "Falha ao consultar CEP (verifique sua internet).";
+  }
+}
+
+function resetNovoClienteForm(){
+  const form = document.getElementById("formNovoCliente");
+  if(form) form.reset();
+  const msg = document.getElementById("ncMsg");
+  if(msg){ msg.style.display = "none"; msg.textContent = ""; }
+  const cepStatus = document.getElementById("cepStatus");
+  if(cepStatus) cepStatus.textContent = "";
+  initNovoClienteForm();
+}
+
+function isValidCPF(cpfStr){
+  const cpf = (cpfStr || "").replace(/\D/g,'');
+  if(cpf.length !== 11) return false;
+  if(/^(\d)\1+$/.test(cpf)) return false;
+
+  let sum = 0;
+  for(let i=0;i<9;i++) sum += Number(cpf[i]) * (10 - i);
+  let d1 = 11 - (sum % 11); if(d1 >= 10) d1 = 0;
+
+  sum = 0;
+  for(let i=0;i<10;i++) sum += Number(cpf[i]) * (11 - i);
+  let d2 = 11 - (sum % 11); if(d2 >= 10) d2 = 0;
+
+  return (Number(cpf[9]) === d1) && (Number(cpf[10]) === d2);
+}
+
+function submitNovoCliente(){
+  const u = getUser();
+  if(!(u.role === "OPERADOR" || u.role === "GESTOR" || u.role === "MASTER")){
+    alert("Sem permissão para cadastrar clientes.");
+    return;
+  }
+
+  const nome = (document.getElementById("ncNome").value || "").trim();
+  const cpf = (document.getElementById("ncCpf").value || "").trim();
+  const rg = (document.getElementById("ncRg").value || "").trim();
+  const cep = (document.getElementById("ncCep").value || "").trim();
+  const numero = (document.getElementById("ncNumero").value || "").trim();
+  const logradouro = (document.getElementById("ncLogradouro").value || "").trim();
+  const complemento = (document.getElementById("ncComplemento").value || "").trim();
+  const bairro = (document.getElementById("ncBairro").value || "").trim();
+  const cidade = (document.getElementById("ncCidade").value || "").trim();
+  const uf = (document.getElementById("ncUf").value || "").trim().toUpperCase();
+  const renda = parseMoneyBR(document.getElementById("ncRenda").value);
+  const bens = (document.getElementById("ncBens").value || "").trim();
+  const mae = (document.getElementById("ncMae").value || "").trim();
+  const pai = (document.getElementById("ncPai").value || "").trim();
+  const operator_id = document.getElementById("ncOperator").value;
+
+  const docFoto = document.getElementById("ncDocFoto").files?.[0] || null;
+  const compResid = document.getElementById("ncCompResid").files?.[0] || null;
+
+  if(!nome || !cpf || !rg || !cep || !numero || !logradouro || !bairro || !cidade || !uf || !mae || !pai || !operator_id){
+    alert("Preencha todos os campos obrigatórios.");
+    return;
+  }
+  if(!isValidCPF(cpf)){
+    alert("CPF inválido. Verifique e tente novamente.");
+    return;
+  }
+  if(!docFoto || !compResid){
+    alert("Envie o documento com foto e o comprovante de residência.");
+    return;
+  }
+
+  const {ops} = data();
+  const op = ops.find(o => o.id === operator_id);
+  const area = op ? op.area : (u.area || "—");
+
+  const clients = lsGet("clientes", []);
+  const cpfDigits = cpf.replace(/\D/g,'');
+  if(clients.some(c => (c.cpf||"").replace(/\D/g,'') === cpfDigits)){
+    alert("Já existe um cliente cadastrado com este CPF.");
+    return;
+  }
+
+  const id = "c-" + uuid();
+  const client = {
+    id,
+    nome,
+    cpf,
+    rg,
+    operator_id,
+    area,
+    status: "ATIVO",
+    score_label: "REGULAR",
+    created_at: new Date().toISOString(),
+    endereco: { cep, logradouro, numero, complemento, bairro, cidade, uf },
+    renda_mensal: renda,
+    bens,
+    nome_mae: mae,
+    nome_pai: pai,
+    docs: {
+      documento_foto: fileMeta(docFoto),
+      comprovante_residencia: fileMeta(compResid)
+    }
+  };
+
+  clients.push(client);
+  lsSet("clientes", clients);
+
+  logAction(operator_id, "CLIENT_CREATED", "client", id, `Cadastrou cliente ${nome}`, null, new Date().toISOString());
+
+  const msg = document.getElementById("ncMsg");
+  if(msg){
+    msg.style.display = "block";
+    msg.innerHTML = `✅ Cliente <strong>${nome}</strong> cadastrado com sucesso.`;
+  }
+
+  // volta para lista e atualiza
+  switchClientesTab("lista");
+  renderClientes();
+  renderDashboard();
+}
+
+/* =============================
+   EMPRÉSTIMOS (render)
+   ============================= */
+function renderEmprestimos(){
+  const {offers, loans, ops, clients} = data();
+  const from = document.getElementById("lFrom").value;
+  const to = document.getElementById("lTo").value;
+  const opId = document.getElementById("lOperator").value;
+
+  const ofT = document.getElementById("tblOffers");
+  const loT = document.getElementById("tblLoans");
+  ofT.innerHTML = "";
+  loT.innerHTML = "";
+
+  offers
+    .filter(o => inRange(o.created_at, from, to))
+    .filter(o => opId==="TODOS" ? true : o.operator_id===opId)
+    .sort((a,b)=> new Date(b.created_at)-new Date(a.created_at))
+    .slice(0, 40)
+    .forEach(o=>{
+      const op = ops.find(x=>x.id===o.operator_id);
+      const cl = clients.find(x=>x.id===o.client_id);
+      const badge = o.status==="ACEITO" ? `<span class="badge success">ACEITO</span>`
+        : (o.status==="OFERECIDO" ? `<span class="badge warning">OFERECIDO</span>` : `<span class="badge muted">${o.status}</span>`);
+      ofT.innerHTML += `
+        <tr>
+          <td>${toLocalDateTime(o.created_at)}</td>
+          <td>${op?op.nome:"—"}</td>
+          <td>${cl?cl.nome:"—"}</td>
+          <td>${badge}</td>
+          <td>${fmtMoney(o.amount)}</td>
+        </tr>
+      `;
+    });
+
+  loans
+    .filter(l => inRange(l.disbursed_at, from, to))
+    .filter(l => opId==="TODOS" ? true : l.operator_id===opId)
+    .sort((a,b)=> new Date(b.disbursed_at)-new Date(a.disbursed_at))
+    .slice(0, 40)
+    .forEach(l=>{
+      const op = ops.find(x=>x.id===l.operator_id);
+      const cl = clients.find(x=>x.id===l.client_id);
+      const badge = l.status==="ATIVO" ? `<span class="badge success">ATIVO</span>`
+        : (l.status==="QUITADO" ? `<span class="badge muted">QUITADO</span>` : `<span class="badge warning">${l.status}</span>`);
+      loT.innerHTML += `
+        <tr>
+          <td>${toLocalDateTime(l.disbursed_at)}</td>
+          <td>${op?op.nome:"—"}</td>
+          <td>${cl?cl.nome:"—"}</td>
+          <td>${badge}</td>
+          <td>${fmtMoney(l.principal)}</td>
+        </tr>
+      `;
+    });
+}
+
+/* =============================
+   COBRANÇAS
+   ============================= */
+function renderCobrancas(){
+  const {collections, ops, clients, installments, loans} = data();
+  const from = document.getElementById("colFrom").value;
+  const to = document.getElementById("colTo").value;
+  const opId = document.getElementById("colOperator").value;
+  const result = document.getElementById("colResult").value;
+
+  const rows = collections
+    .filter(c => inRange(c.attempted_at, from, to))
+    .filter(c => opId==="TODOS" ? true : c.operator_id===opId)
+    .filter(c => result==="TODOS" ? true : c.result===result)
+    .sort((a,b)=> new Date(b.attempted_at)-new Date(a.attempted_at));
+
+  const recebido = rows.reduce((s,c)=>s+(c.amount_collected||0),0);
+  const sucesso = rows.filter(c=>c.result==="SUCESSO").length;
+  const promessa = rows.filter(c=>c.result==="PROMESSA").length;
+  const naoPagou = rows.filter(c=>c.result==="NAO_PAGOU").length;
+
+  // faltantes
+  let pending = [];
+  const today = new Date();
+  if(opId==="TODOS"){
+    const loanIds = loans.map(l=>l.id);
+    const inst = installments.filter(i=>loanIds.includes(i.loan_id));
+    pending = inst.filter(i => new Date(i.due_date)<=today && (i.amount_paid||0)<(i.amount_due||0));
+  }else{
+    const loanIds = loans.filter(l=>l.operator_id===opId).map(l=>l.id);
+    const inst = installments.filter(i=>loanIds.includes(i.loan_id));
+    pending = inst.filter(i => new Date(i.due_date)<=today && (i.amount_paid||0)<(i.amount_due||0));
+  }
+
+  const kpis = [
+    {title:"Cobranças feitas", value: rows.length, sub:"no período", icon:"🧾"},
+    {title:"Recebido", value: fmtMoney(recebido), sub:"no período", icon:"✅"},
+    {title:"Sucesso", value: sucesso, sub:"cobranças", icon:"🎯"},
+    {title:"Promessas", value: promessa, sub:"agendamentos", icon:"🗓️"},
+    {title:"Não pagou", value: naoPagou, sub:"tentativas", icon:"❌"},
+    {title:"Cobranças faltantes", value: pending.length, sub:"parcelas em aberto até hoje", icon:"⚠️"},
+  ];
+  const kpiEl = document.getElementById("colKpis");
+  kpiEl.innerHTML = "";
+  kpis.forEach(k=>{
+    const div = document.createElement("div");
+    div.className = "card";
+    div.style.cursor="default";
+    div.innerHTML = `<h3>${k.icon} ${k.title}</h3><p>${k.value}</p><small>${k.sub}</small>`;
+    kpiEl.appendChild(div);
+  });
+
+  const tbody = document.getElementById("tblCobrancas");
+  tbody.innerHTML = "";
+  rows.slice(0, 60).forEach(c=>{
+    const op = ops.find(o=>o.id===c.operator_id);
+    const cl = clients.find(x=>x.id===c.client_id);
+    const inst = installments.find(i=>i.id===c.installment_id);
+    const parcelaTxt = inst ? `#${inst.number} (venc: ${toISODate(inst.due_date).split("-").reverse().join("/")})` : "-";
+    tbody.innerHTML += `
+      <tr>
+        <td>${toLocalDateTime(c.attempted_at)}</td>
+        <td>${op?op.nome:"—"}</td>
+        <td>${cl?cl.nome:"—"}</td>
+        <td>${parcelaTxt}</td>
+        <td>${badgeForResult(c.result)}</td>
+        <td>${fmtMoney(c.amount_collected||0)}</td>
+        <td style="color:var(--muted)">${c.notes || "-"}</td>
+      </tr>
+    `;
+  });
+}
+
+/* =============================
+   PENDÊNCIAS
+   ============================= */
+function renderPendencias(){
+  const {ops, clients, loans, installments, collections} = data();
+  const opId = document.getElementById("pOperator").value;
+  const only = document.getElementById("pOnlyOverdue").value;
+
+  const today = new Date();
+  let loanIds = loans.map(l=>l.id);
+  if(opId!=="TODOS") loanIds = loans.filter(l=>l.operator_id===opId).map(l=>l.id);
+
+  const instOpen = installments
+    .filter(i => loanIds.includes(i.loan_id))
+    .filter(i => new Date(i.due_date) <= today && (i.amount_paid||0) < (i.amount_due||0));
+
+  const rows = instOpen
+    .filter(i => only==="SIM" ? (i.status==="VENCIDO" || i.status==="PARCIAL") : true)
+    .map(i=>{
+      const loan = loans.find(l=>l.id===i.loan_id);
+      const client = clients.find(c=>c.id===loan.client_id);
+      const op = ops.find(o=>o.id===loan.operator_id);
+      const openAmt = Math.max(0, (i.amount_due||0)-(i.amount_paid||0));
+      const lastCol = collections
+        .filter(c => c.installment_id===i.id)
+        .sort((a,b)=> new Date(b.attempted_at)-new Date(a.attempted_at))[0];
+
+      return {i, client, op, openAmt, lastCol};
+    })
+    .sort((a,b)=> new Date(b.i.due_date)-new Date(a.i.due_date));
+
+  const tbody = document.getElementById("tblPendencias");
+  tbody.innerHTML = "";
+
+  rows.slice(0, 80).forEach(r=>{
+    const badge = (r.i.status==="VENCIDO")
+      ? `<span class="badge danger">VENCIDO</span>`
+      : (r.i.status==="PARCIAL" ? `<span class="badge warning">PARCIAL</span>` : `<span class="badge muted">${r.i.status}</span>`);
+    const last = r.lastCol
+      ? `${toLocalDateTime(r.lastCol.attempted_at)} • ${r.lastCol.result}`
+      : "—";
+    tbody.innerHTML += `
+      <tr>
+        <td><strong>${r.client ? r.client.nome : "—"}</strong></td>
+        <td>${r.op ? r.op.nome : "—"}</td>
+        <td>#${r.i.number}</td>
+        <td>${toISODate(r.i.due_date).split("-").reverse().join("/")}</td>
+        <td>${badge}</td>
+        <td>${fmtMoney(r.openAmt)}</td>
+        <td style="color:var(--muted)">${last}</td>
+      </tr>
+    `;
+  });
+}
+
+/* =============================
+   AUDITORIA
+   ============================= */
+function renderAuditoria(){
+  const {activities, ops} = data();
+  const from = document.getElementById("aFrom").value;
+  const to = document.getElementById("aTo").value;
+  const opId = document.getElementById("aOperator").value;
+  const type = document.getElementById("aType").value;
+
+  const rows = activities
+    .filter(a => inRange(a.created_at, from, to))
+    .filter(a => opId==="TODOS" ? true : a.operator_id===opId)
+    .filter(a => type==="TODOS" ? true : a.action_type===type)
+    .sort((a,b)=> new Date(b.created_at)-new Date(a.created_at));
+
+  const tbody = document.getElementById("tblAuditoria");
+  tbody.innerHTML = "";
+  rows.slice(0, 120).forEach(a=>{
+    const op = ops.find(o=>o.id===a.operator_id);
+    tbody.innerHTML += `
+      <tr>
+        <td>${toLocalDateTime(a.created_at)}</td>
+        <td>${op?op.nome:"—"}</td>
+        <td><span class="badge muted">${a.action_type}</span></td>
+        <td>${a.entity_type} • ${a.entity_id}</td>
+        <td>${a.detail || "-"}</td>
+        <td>${a.value ? fmtMoney(a.value) : "-"}</td>
+      </tr>
+    `;
+  });
+}
+
+/* =============================
+   ROTAS
+   ============================= */
+function renderRotas(){
+  const {requestLogs, ops} = data();
+  const date = document.getElementById("rDate").value;
+  const opId = document.getElementById("rOperator").value;
+  const onlyErr = document.getElementById("rOnlyErrors").value;
+
+  const start = new Date(date + "T00:00:00");
+  const end = new Date(date + "T23:59:59");
+
+  const rows = requestLogs
+    .filter(r => {
+      const d = new Date(r.created_at);
+      return d>=start && d<=end;
+    })
+    .filter(r => opId==="TODOS" ? true : r.user_id===opId)
+    .filter(r => onlyErr==="SIM" ? (r.status_code>=400) : true)
+    .sort((a,b)=> new Date(b.created_at)-new Date(a.created_at));
+
+  const tbody = document.getElementById("tblRotas");
+  tbody.innerHTML = "";
+  rows.slice(0, 150).forEach(r=>{
+    const op = ops.find(o=>o.id===r.user_id);
+    const badge = (r.status_code>=500)
+      ? `<span class="badge danger">${r.status_code}</span>`
+      : (r.status_code>=400 ? `<span class="badge warning">${r.status_code}</span>` : `<span class="badge success">${r.status_code}</span>`);
+    const dt = new Date(r.created_at);
+    tbody.innerHTML += `
+      <tr>
+        <td>${pad(dt.getHours())}:${pad(dt.getMinutes())}</td>
+        <td>${op?op.nome:"—"}</td>
+        <td><span class="badge muted">${r.method}</span></td>
+        <td>${r.path}</td>
+        <td>${badge}</td>
+        <td style="color:var(--muted)">${r.ip}</td>
+      </tr>
+    `;
+  });
+}
+
+/* =============================
+   INDICAÇÕES / RELATÓRIOS
+   ============================= */
+function renderIndicacoes(){
+  const {ops, clients, referrals} = data();
+  const tbody = document.getElementById("tblIndicacoes");
+  tbody.innerHTML = "";
+
+  ops.forEach(op=>{
+    const opClients = clients.filter(c=>c.operator_id===op.id);
+    const opRef = referrals.filter(r=>r.operator_id===op.id);
+    const clientsWhoReferred = new Set(opRef.map(r=>r.referrer_client_id)).size;
+
+    tbody.innerHTML += `
+      <tr>
+        <td><strong>${op.nome}</strong><br><span style="color:var(--muted);font-size:12px">${op.status}</span></td>
+        <td>${opClients.length}</td>
+        <td>${clientsWhoReferred}</td>
+        <td>${opRef.length}</td>
+      </tr>
+    `;
+  });
+}
+
+function renderRelatorios(){
+  const m = computeMetrics(currentFilters);
+  const rows = [
+    ["Clientes totais", m.clientesTotal, "Filtra por operador no Dashboard"],
+    ["Bons pagadores", m.bonsPagadores, "Score do cliente"],
+    ["Difíceis pagadores", m.dificeisPagadores, "Score do cliente"],
+    ["Empréstimos oferecidos (período)", m.ofertas, "Tabela de Ofertas"],
+    ["Empréstimos feitos (período)", m.emprestimosFeitos, "Tabela de Empréstimos"],
+    ["Cobranças feitas (período)", m.cobrancasFeitas, "Detalhes em Cobranças"],
+    ["Cobranças faltantes", m.cobrancasFaltam, "Parcelas em aberto até hoje"],
+    ["Total recebido (período)", fmtMoney(m.recebido), "Somatório de cobranças com valor"],
+    ["Parcelas vencidas/parciais", m.vencidos, "Pendências / Atrasos"],
+    ["Indicações (período)", m.indicacoes, "Seção Indicações"],
+  ];
+  const tbody = document.getElementById("tblRelatorios");
+  tbody.innerHTML = "";
+  rows.forEach(r=>{
+    tbody.innerHTML += `
+      <tr>
+        <td><strong>${r[0]}</strong></td>
+        <td>${r[1]}</td>
+        <td style="color:var(--muted)">${r[2]}</td>
+      </tr>
+    `;
+  });
+}
+
+/* =============================
+   EMPRESAS
+   ============================= */
+function toggleEmpresaForm(force){
+  const u = getUser();
+  if(!(u.role==="GESTOR" || u.role==="MASTER")){
+    alert("Somente Gestor/Master pode cadastrar empresas.");
+    return;
+  }
+  const el = document.getElementById("empresaForm");
+  if(typeof force === "boolean"){
+    el.style.display = force ? "grid" : "none";
+  }else{
+    el.style.display = (el.style.display==="grid") ? "none" : "grid";
+  }
+}
+
+function saveEmpresa(){
+  const u = getUser();
+  if(!(u.role==="GESTOR" || u.role==="MASTER")){
+    alert("Somente Gestor/Master pode cadastrar empresas.");
+    return;
+  }
+  const cnpj = document.getElementById("eCnpj").value.trim();
+  const razao = document.getElementById("eRazao").value.trim();
+  const endereco = document.getElementById("eEndereco").value.trim();
+  const dono = document.getElementById("eDono").value.trim();
+  const dividas = document.getElementById("eDividas").value;
+  const funcionarios = Number(document.getElementById("eFuncionarios").value || 0);
+  const docs = document.getElementById("eDocs").value.trim();
+
+  if(!cnpj || !razao){ alert("Informe CNPJ e Razão Social."); return; }
+
+  const empresas = getEmpresas();
+  const id = "e-" + uuid();
+  empresas.push({id, cnpj, razao, endereco, dono, dividas, funcionarios, docs});
+  setEmpresas(empresas);
+
+  logAction("system", "COMPANY_CREATED", "company", id, `Empresa criada: ${razao}`, null, new Date().toISOString());
+  if(dividas==="SIM"){
+    pushAlert("danger", "GESTOR", "Empresa com dívidas", `${razao} (${cnpj}) marcada com dívidas.`);
+  }
+
+  ["eCnpj","eRazao","eEndereco","eDono","eFuncionarios","eDocs"].forEach(k=> document.getElementById(k).value="");
+  document.getElementById("eDividas").value="NAO";
+  toggleEmpresaForm(false);
+  refreshAllEmpresaSelects();
+  renderEmpresas();
+}
+
+function renderEmpresas(){
+  const {empresas} = data();
+  const q = (document.getElementById("eSearch")?.value || "").trim().toLowerCase();
+  const tbody = document.getElementById("tblEmpresas");
+  tbody.innerHTML = "";
+
+  empresas
+    .filter(e => !q ? true : (e.cnpj||"").toLowerCase().includes(q) || (e.razao||"").toLowerCase().includes(q))
+    .forEach(e=>{
+      const dBadge = e.dividas==="SIM" ? `<span class="badge danger">SIM</span>` : `<span class="badge success">NÃO</span>`;
+      tbody.innerHTML += `
+        <tr>
+          <td><strong>${e.cnpj}</strong></td>
+          <td>${e.razao}</td>
+          <td>${e.endereco || "-"}</td>
+          <td>${e.dono || "-"}</td>
+          <td>${dBadge}</td>
+          <td>${e.funcionarios ?? 0}</td>
+          <td style="color:var(--muted)">${(e.docs||"-").slice(0,120)}${(e.docs||"").length>120?"...":""}</td>
+        </tr>
+      `;
+    });
+}
+
+/* =============================
+   EMPRÉSTIMOS PJ (render)
+   ============================= */
+function renderEmprestimosPJ(){
+  const {loansPJ, empresas, ops} = data();
+  const from = document.getElementById("pjFrom").value;
+  const to = document.getElementById("pjTo").value;
+  const opId = document.getElementById("pjOperator").value;
+  const empId = document.getElementById("pjEmpresa").value;
+
+  const tbody = document.getElementById("tblLoansPJ");
+  tbody.innerHTML = "";
+
+  loansPJ
+    .filter(l => inRange(l.disbursed_at, from, to))
+    .filter(l => opId==="TODOS" ? true : l.operator_id===opId)
+    .filter(l => empId==="TODOS" ? true : l.empresa_id===empId)
+    .sort((a,b)=> new Date(b.disbursed_at)-new Date(a.disbursed_at))
+    .slice(0, 80)
+    .forEach(l=>{
+      const op = ops.find(o=>o.id===l.operator_id);
+      const e = empresas.find(x=>x.id===l.empresa_id);
+      const stBadge = l.status==="ATIVO" ? `<span class="badge success">ATIVO</span>` : `<span class="badge muted">${l.status}</span>`;
+      tbody.innerHTML += `
+        <tr>
+          <td>${toLocalDateTime(l.disbursed_at)}</td>
+          <td>${op?op.nome:"—"}</td>
+          <td>${e?e.razao:"—"}</td>
+          <td>${e?e.cnpj:"—"}</td>
+          <td>${stBadge}</td>
+          <td>${fmtMoney(l.principal)}</td>
+          <td>${l.installments || "-"}</td>
+        </tr>
+      `;
+    });
+}
+
+/* =============================
+   ALERTAS
+   ============================= */
+function regenerateAlerts(){
+  // Gera alertas "automáticos" a partir do estado atual (demo)
+  const {installments, loans, policies, empresas} = data();
+  const u = getUser();
+
+  // Mantém os já existentes, mas pode adicionar alguns "do momento"
+  const alerts = getAlerts();
+
+  // empréstimos acima do limite (varre loans e compara)
+  loans.slice(0,50).forEach(l=>{
+    const pol = policies[l.operator_id] || {maxLoan:0};
+    if(pol.maxLoan && l.principal > pol.maxLoan){
+      const key = `HL-${l.id}`;
+      if(!alerts.some(a=>a.id===key)){
+        alerts.push({
+          id: key,
+          level:"danger",
+          targetRole:"GESTOR",
+          subject:"Empréstimo acima do limite",
+          detail:`Operador ${l.operator_id} liberou ${fmtMoney(l.principal)} (limite: ${fmtMoney(pol.maxLoan)}).`,
+          created_at: l.disbursed_at
+        });
+      }
+    }
+  });
+
+  // empresas com dívidas
+  empresas.forEach(e=>{
+    if(e.dividas==="SIM"){
+      const key = `DEBT-${e.id}`;
+      if(!alerts.some(a=>a.id===key)){
+        alerts.push({
+          id:key,
+          level:"warning",
+          targetRole:"GESTOR",
+          subject:"Empresa marcada com dívidas",
+          detail:`${e.razao} (${e.cnpj}) está com dívidas = SIM.`,
+          created_at: new Date().toISOString()
+        });
+      }
+    }
+  });
+
+  // parcelas vencidas
+  const overdueCount = installments.filter(i => i.status==="VENCIDO" || i.status==="PARCIAL").length;
+  if(overdueCount>0 && !alerts.some(a=>a.id==="OVERDUE-SUM")){
+    alerts.push({
+      id:"OVERDUE-SUM",
+      level:"danger",
+      targetRole:"GESTOR",
+      subject:"Parcelas vencidas/pendentes",
+      detail:`Existem ${overdueCount} parcelas vencidas ou parciais no sistema (demo).`,
+      created_at: new Date().toISOString()
+    });
+  }
+
+  setAlerts(alerts);
+}
+
+function renderAlertas(){
+  regenerateAlerts();
+  const {alerts} = data();
+  const u = getUser();
+
+  const rows = alerts
+    .filter(a => (u.role==="MASTER") ? true : (a.targetRole==="GESTOR" ? (u.role==="GESTOR") : (a.targetRole==="OPERADOR" ? (u.role==="OPERADOR") : true)))
+    .sort((a,b)=> new Date(b.created_at)-new Date(a.created_at))
+    .slice(0,120);
+
+  const tbody = document.getElementById("tblAlertas");
+  tbody.innerHTML = "";
+  rows.forEach(a=>{
+    const badge = a.level==="danger" ? `<span class="badge danger">URGENTE</span>` :
+      (a.level==="warning" ? `<span class="badge warning">ATENÇÃO</span>` : `<span class="badge success">OK</span>`);
+    tbody.innerHTML += `
+      <tr>
+        <td>${toLocalDateTime(a.created_at)}</td>
+        <td>${badge}</td>
+        <td>${a.targetRole}</td>
+        <td><strong>${a.subject}</strong></td>
+        <td style="color:var(--muted)">${a.detail}</td>
+      </tr>
+    `;
+  });
+}
+
+/* =============================
+   GESTORES (MASTER)
+   ============================= */
+function saveGestor(){
+  const u = getUser();
+  if(u.role!=="MASTER"){ alert("Somente MASTER pode criar gestores."); return; }
+
+  const nome = document.getElementById("gNome").value.trim();
+  const login = document.getElementById("gLogin").value.trim();
+  const senha = document.getElementById("gSenha").value.trim();
+  const area = document.getElementById("gArea").value.trim();
+
+  if(!nome || !login || !senha || !area){ alert("Preencha todos os campos."); return; }
+
+  const gestores = getGestores();
+  gestores.push({id:"g-"+uuid(), nome, login, senha, area, status:"ATIVO"});
+  setGestores(gestores);
+
+  ["gNome","gLogin","gSenha","gArea"].forEach(k=> document.getElementById(k).value="");
+  renderGestores();
+  pushAlert("success","MASTER","Gestor criado",`${nome} (${area}) criado com sucesso.`);
+}
+
+function renderGestores(){
+  const {gestores} = data();
+  const tbody = document.getElementById("tblGestores");
+  tbody.innerHTML = "";
+  gestores.forEach(g=>{
+    const st = g.status==="ATIVO" ? `<span class="badge success">ATIVO</span>` : `<span class="badge muted">${g.status}</span>`;
+    tbody.innerHTML += `
+      <tr>
+        <td><strong>${g.nome}</strong></td>
+        <td>${g.login}</td>
+        <td>${g.area}</td>
+        <td>${st}</td>
+      </tr>
+    `;
+  });
+}
+
+/* =============================
+   ANÁLISES (MASTER)
+   ============================= */
+function createAnalysisRequestFromFilters(){
+  const u = getUser();
+  // operador/gestor pode solicitar; master vai tratar
+  const q = (document.getElementById("cSearch").value || "").trim();
+  if(!q){
+    alert("Digite um nome no filtro Buscar para solicitar análise (demo).");
+    return;
+  }
+  const reqs = getAnalises();
+  reqs.push({
+    id:"ar-"+uuid(),
+    created_at: new Date().toISOString(),
+    client_name: q,
+    operator_name: u.name || u.role,
+    reason: "Solicitação de análise de conduta/vida financeira (demo)",
+    status: "PENDENTE"
+  });
+  setAnalises(reqs);
+  pushAlert("warning","MASTER","Novo pedido de análise",`Cliente: ${q} • Solicitante: ${u.name || u.role}`);
+  alert("Pedido de análise enviado ao MASTER (demo).");
+}
+
+function renderAnalises(){
+  const u = getUser();
+  if(u.role!=="MASTER"){ return; }
+
+  const status = document.getElementById("anStatus").value;
+  const q = (document.getElementById("anSearch").value || "").trim().toLowerCase();
+
+  const reqs = getAnalises()
+    .filter(r => status==="TODOS" ? true : r.status===status)
+    .filter(r => !q ? true : (r.client_name||"").toLowerCase().includes(q) || (r.operator_name||"").toLowerCase().includes(q))
+    .sort((a,b)=> new Date(b.created_at)-new Date(a.created_at));
+
+  const tbody = document.getElementById("tblAnalises");
+  tbody.innerHTML = "";
+  reqs.forEach(r=>{
+    const stBadge = r.status==="PENDENTE" ? `<span class="badge warning">PENDENTE</span>` :
+      (r.status==="EM_ANALISE" ? `<span class="badge muted">EM ANÁLISE</span>` :
+        (r.status==="APROVADO" ? `<span class="badge success">APROVADO</span>` : `<span class="badge danger">REPROVADO</span>`));
+
+    tbody.innerHTML += `
+      <tr>
+        <td>${toLocalDateTime(r.created_at)}</td>
+        <td><strong>${r.client_name}</strong></td>
+        <td>${r.operator_name}</td>
+        <td style="color:var(--muted)">${r.reason}</td>
+        <td>${stBadge}</td>
+        <td style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn ghost" onclick="updateAnalise('${r.id}','EM_ANALISE')">Em análise</button>
+          <button class="btn success" onclick="updateAnalise('${r.id}','APROVADO')">Aprovar</button>
+          <button class="btn danger" onclick="updateAnalise('${r.id}','REPROVADO')">Reprovar</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+function updateAnalise(id, status){
+  const reqs = getAnalises();
+  const r = reqs.find(x=>x.id===id);
+  if(!r) return;
+  r.status = status;
+  setAnalises(reqs);
+
+  pushAlert(status==="APROVADO"?"success":(status==="REPROVADO"?"danger":"warning"), "MASTER",
+    "Análise atualizada",
+    `Pedido ${id} agora está ${status} (cliente: ${r.client_name}).`
+  );
+  renderAnalises();
+}
+
+/* =============================
+   REFRESH SELECTS
+   ============================= */
+function refreshAllOperatorSelects(){
+  fillOperatorSelect(document.getElementById("fOperator"), true);
+  fillOperatorSelect(document.getElementById("cOperator"), true);
+  fillOperatorSelect(document.getElementById("ncOperator"), false);
+  fillOperatorSelect(document.getElementById("lOperator"), true);
+  fillOperatorSelect(document.getElementById("colOperator"), true);
+  fillOperatorSelect(document.getElementById("pOperator"), true);
+  fillOperatorSelect(document.getElementById("aOperator"), true);
+  fillOperatorSelect(document.getElementById("rOperator"), true);
+
+  // caixa / políticas
+  fillOperatorSelect(document.getElementById("cashToOperator"), false);
+  fillOperatorSelect(document.getElementById("polOperator"), false);
+
+  ["fOperator","cOperator","lOperator","colOperator","pOperator","aOperator","rOperator"].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el && !el.value) el.value = "TODOS";
+  });
+}
+
+function refreshAllEmpresaSelects(){
+  fillEmpresaSelect(document.getElementById("pjEmpresa"), true);
+}
+
+/* =============================
+   CONFIG
+   ============================= */
+function applyRole(){
+  const role = document.getElementById("cfgRole").value;
+  const name = document.getElementById("cfgName").value.trim() || (role==="GESTOR" ? "Gestor - Área Centro" : (role==="MASTER" ? "Administrador Geral" : "Operador Demo"));
+  const area = document.getElementById("cfgArea").value.trim() || "Centro";
+  setUser({role, name, area, id: "u-demo-"+role.toLowerCase()});
+  setRoleUI();
+  // Ao trocar perfil, força re-render
+  initAll(false);
+  alert("Perfil salvo (demo).");
+}
+
+function resetDemo(){
+  [
+    "demoSeeded","operadores","clientes","loan_offers","loans","installments","collections",
+    "activity_logs","referrals","request_logs","operator_sessions","loan_policies",
+    "cash_ledger","cash_balances","empresas","loans_pj","gestores","analysis_requests","alerts"
+  ].forEach(k=> localStorage.removeItem(k));
+  seedDemoData();
+  initAll();
+  alert("Dados demo resetados.");
+}
+
+/* =============================
+   INIT
+   ============================= */
+function initAll(showAlert=true){
+  setRoleUI();
+  initDashboardFilters();
+  refreshAllOperatorSelects();
+  refreshAllEmpresaSelects();
+
+  // default filters other pages
+  const today = new Date();
+  const fromDefault = new Date(); fromDefault.setDate(today.getDate()-6);
+
+  document.getElementById("lFrom").value = toISODate(fromDefault);
+  document.getElementById("lTo").value = toISODate(today);
+  document.getElementById("lOperator").value = "TODOS";
+
+  document.getElementById("colFrom").value = toISODate(fromDefault);
+  document.getElementById("colTo").value = toISODate(today);
+  document.getElementById("colOperator").value = "TODOS";
+
+  document.getElementById("aFrom").value = toISODate(fromDefault);
+  document.getElementById("aTo").value = toISODate(today);
+  document.getElementById("aOperator").value = "TODOS";
+
+  document.getElementById("rDate").value = toISODate(today);
+  document.getElementById("rOperator").value = "TODOS";
+
+  // PJ
+  document.getElementById("pjFrom").value = toISODate(fromDefault);
+  document.getElementById("pjTo").value = toISODate(today);
+  document.getElementById("pjOperator").innerHTML = `<option value="TODOS">TODOS</option>`;
+  fillOperatorSelect(document.getElementById("pjOperator"), true);
+  document.getElementById("pjOperator").value = "TODOS";
+  document.getElementById("pjEmpresa").value = "TODOS";
+
+  // config values
+  const u = getUser();
+  document.getElementById("cfgRole").value = u.role;
+  document.getElementById("cfgName").value = u.name;
+  document.getElementById("cfgArea").value = u.area;
+
+  // init policies fields
+  const polOp = document.getElementById("polOperator");
+  if(polOp && polOp.options.length){
+    polOp.addEventListener("change", ()=>{
+      const pol = getPolicies()[polOp.value] || {maxLoan:0, maxInstallments:1};
+      document.getElementById("polMaxLoan").value = pol.maxLoan || 0;
+      document.getElementById("polMaxInstall").value = pol.maxInstallments || 1;
+    });
+    // set initial
+    const first = polOp.value || (polOp.options[0]?.value);
+    if(first){
+      polOp.value = first;
+      const pol = getPolicies()[first] || {maxLoan:0, maxInstallments:1};
+      document.getElementById("polMaxLoan").value = pol.maxLoan || 0;
+      document.getElementById("polMaxInstall").value = pol.maxInstallments || 1;
+    }
+  }
+
+  // policy note
+  const uRole = getUser().role;
+  document.getElementById("polNote").innerHTML = (uRole==="GESTOR" || uRole==="MASTER")
+    ? "Você pode ajustar limites e parcelas por operador."
+    : "Somente Gestor/Master pode ajustar políticas.";
+
+  // render all
+  renderDashboard();
+  renderOperadores();
+  renderClientes();
+  renderEmprestimos();
+  renderCobrancas();
+  renderPendencias();
+  renderAuditoria();
+  renderRotas();
+  renderIndicacoes();
+  renderRelatorios();
+  renderEmpresas();
+  renderEmprestimosPJ();
+  renderCaixa();
+  renderGestores();
+  renderAnalises();
+  renderAlertas();
+
+  if(showAlert) console.log("SistemaFin V2 carregado (demo).");
+}
+
+/* Boot */
+seedDemoData();
+initAll();
+
+function makeTablesScrollable(){
+  document.querySelectorAll("table").forEach(t=>{
+    const p = t.parentElement;
+    if(p && p.classList && p.classList.contains("table-scroll")) return;
+    const wrap = document.createElement("div");
+    wrap.className = "table-scroll";
+    t.parentNode.insertBefore(wrap, t);
+    wrap.appendChild(t);
+  });
+}
+
+function applyStartSectionFromPage(){
+  const start = document.body.dataset.startSection || "dashboard";
+  if(start) openSection(start, {push:false});
+}
+
+// Rodar depois do render
+makeTablesScrollable();
+applyStartSectionFromPage();
+</script>
+
+</body>
+</html>
